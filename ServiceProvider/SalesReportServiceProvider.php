@@ -23,16 +23,16 @@ class SalesReportServiceProvider implements ServiceProviderInterface
         $app->match($admin . 'sales_report', '\\Plugin\\SalesReport\\Controller\\SalesReportController::index')
             ->bind('admin_sales_report');
 
-        $app->post($admin . 'sales_report/term', '\\Plugin\\SalesReport\\Controller\\SalesReportController::term')
+        $app->match($admin . 'sales_report/term', '\\Plugin\\SalesReport\\Controller\\SalesReportController::term')
             ->bind('admin_sales_report_term');
 
-        $app->post($admin . 'sales_report/member', '\\Plugin\\SalesReport\\Controller\\SalesReportController::member')
+        $app->match($admin . 'sales_report/member', '\\Plugin\\SalesReport\\Controller\\SalesReportController::member')
             ->bind('admin_sales_report_member');
 
-        $app->post($admin . 'sales_report/age', '\\Plugin\\SalesReport\\Controller\\SalesReportController::age')
+        $app->match($admin . 'sales_report/age', '\\Plugin\\SalesReport\\Controller\\SalesReportController::age')
             ->bind('admin_sales_report_age');
 
-        $app->post($admin . 'sales_report/product', '\\Plugin\\SalesReport\\Controller\\SalesReportController::product')
+        $app->match($admin . 'sales_report/product', '\\Plugin\\SalesReport\\Controller\\SalesReportController::product')
             ->bind('admin_sales_report_product');
 
         // Formの定義
@@ -69,11 +69,6 @@ class SalesReportServiceProvider implements ServiceProviderInterface
                         'id' => 'admin_sales_report_age',
                         'url' => 'admin_sales_report_age',
                         'name' => '年代別集計',
-                    ),
-                    array(
-                        'id' => 'admin_sales_report_member',
-                        'url' => 'admin_sales_report_member',
-                        'name' => '会員別集計',
                     ),
                 ),
             );

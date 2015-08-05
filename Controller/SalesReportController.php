@@ -60,7 +60,11 @@ class SalesReportController
             ->getForm();
         $form->handleRequest($request);
 
-        $data = array();
+        $data = array(
+            'graph' => null,
+            'raw' => null
+        );
+
         if (!is_null($reportType) && $form->isValid()) {
             $data = $app['eccube.plugin.service.sales_report']
                 ->setReportType($reportType)
@@ -68,11 +72,14 @@ class SalesReportController
                 ->getData();
         }
 
+        $template = is_null($reportType) ? 'term' : $reportType;
+
         return $app->render(
-            'SalesReport/Resource/template/index.twig',
+            'SalesReport/Resource/template/' . $template . '.twig',
             array(
                 'form' => $form->createView(),
-                'data' => json_encode($data),
+                'graphData' => json_encode($data['graph']),
+                'rawData' => $data['raw'],
                 'type' => $reportType,
             )
         );

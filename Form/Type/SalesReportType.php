@@ -61,6 +61,19 @@ class SalesReportType extends AbstractType
                 'format' => 'yyyy-MM-dd',
                 'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
             ))
+            ->add('unit', 'choice', array(
+                'label' => '集計単位',
+                'required' => false,
+                'expanded' => true,
+                'multiple' => false,
+                'empty_value' => false,
+                'choices' => array(
+                    'byDay' => '日別',
+                    'byMonth' => '月別',
+                    'byWeekDay' => '曜日別',
+                    'byHour' => '時間別',
+                )
+            ))
         ;
     }
 
