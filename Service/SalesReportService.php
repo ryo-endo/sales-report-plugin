@@ -219,9 +219,15 @@ class SalesReportService
                     $products[$id] = array(
                         'ProductClass' => $ProductClass,
                         'total' => 0,
+                        'quantity' => 0,
+                        'price' => 0,
+                        'time' => 0,
                     );
                 }
                 $products[$id]['total'] += $OrderDetail->getPriceIncTax();
+                $products[$id]['quantity'] += $OrderDetail->getQuantity();
+                $products[$id]['price'] = $OrderDetail->getPriceIncTax();
+                $products[$id]['time'] ++;
             }
         }
 
@@ -266,6 +272,7 @@ class SalesReportService
 
     private function convertByAge($data)
     {
+        $raw = array();
         $result = array();
         $now = new \DateTime();
         foreach ($data as $Order) {
@@ -278,12 +285,18 @@ class SalesReportService
             }
             if (!array_key_exists($age, $result)) {
                 $result[$age] = 0;
+                $raw[$age] = array(
+                    'total' => 0,
+                    'time' => 0,
+                );
             }
             $result[$age] += $Order->getPaymentTotal();
+            $raw[$age]['total'] += $Order->getPaymentTotal();
+            $raw[$age]['time'] ++;
         }
 
         return array(
-            'raw' => $result,
+            'raw' => $raw,
             'graph' => array(
                 'labels' => array_keys($result),
                 'datasets' => array(
