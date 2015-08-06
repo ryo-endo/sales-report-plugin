@@ -1,0 +1,85 @@
+{#
+This file is part of EC-CUBE
+
+Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
+
+http://www.lockon.co.jp/
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+#}
+{% extends 'SalesReport/Resource/template/index.twig' %}
+
+{% set report_title = '期間別集計' %}
+{% set action = url('admin_sales_report_term') %}
+{% set menus = ['admin_sales_report', 'admin_sales_report_term'] %}
+
+{% block chart %}
+    <script>
+        var graphData = {{ graphData|raw }};
+        var LineChart = new Chart(ctx).Line(graphData);
+    </script>
+{% endblock %}
+
+{% block option %}
+<div class="form-group">
+    {{ form_label(form.unit) }}
+    <div class="col-sm-9 col-lg-9">
+        {{ form_widget(form.unit) }}
+        {{ form_errors(form.unit) }}
+    </div>
+</div>
+{% endblock %}
+
+{% block table %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header with-arrow">
+                    <h3 class="box-title">table<a href="#" class="icon_wrap"><span class="icon fa fa-chevron-right"></span></a></h3>
+                </div><!-- /.box-header -->
+                <div class="box-body no-padding">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>期間</th>
+                                    <th>購入件数</th>
+                                    <th>購入合計</th>
+                                    <th>購入平均</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for date, row in rawData %}
+                                    <tr>
+                                        <td>{{ date }}</td>
+                                        <td>{{ row.time }}</td>
+                                        <td>{{ row.price }}</td>
+                                        <td>
+                                            {% if row.time > 0 %}
+                                                {{ (row.price / row.time)|round(2, 'floor') }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div><!-- /.box-body -->
+            </div><!-- /.box -->
+        </div><!-- /.col -->
+    </div>
+{% endblock %}
