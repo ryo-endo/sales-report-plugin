@@ -20,19 +20,19 @@ class SalesReportServiceProvider implements ServiceProviderInterface
     {
         // Routingを追加
         $admin = $app['config']['admin_route'];
-        $app->match($admin . 'sales_report', '\\Plugin\\SalesReport\\Controller\\SalesReportController::index')
+        $app->match($admin . '/sales_report', '\\Plugin\\SalesReport\\Controller\\SalesReportController::index')
             ->bind('admin_sales_report');
 
-        $app->match($admin . 'sales_report/term', '\\Plugin\\SalesReport\\Controller\\SalesReportController::term')
+        $app->match($admin . '/sales_report/term', '\\Plugin\\SalesReport\\Controller\\SalesReportController::term')
             ->bind('admin_sales_report_term');
 
-        $app->match($admin . 'sales_report/member', '\\Plugin\\SalesReport\\Controller\\SalesReportController::member')
+        $app->match($admin . '/sales_report/member', '\\Plugin\\SalesReport\\Controller\\SalesReportController::member')
             ->bind('admin_sales_report_member');
 
-        $app->match($admin . 'sales_report/age', '\\Plugin\\SalesReport\\Controller\\SalesReportController::age')
+        $app->match($admin . '/sales_report/age', '\\Plugin\\SalesReport\\Controller\\SalesReportController::age')
             ->bind('admin_sales_report_age');
 
-        $app->match($admin . 'sales_report/product', '\\Plugin\\SalesReport\\Controller\\SalesReportController::product')
+        $app->match($admin . '/sales_report/product', '\\Plugin\\SalesReport\\Controller\\SalesReportController::product')
             ->bind('admin_sales_report_product');
 
         // Formの定義
