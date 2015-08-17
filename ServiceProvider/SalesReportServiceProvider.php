@@ -19,7 +19,7 @@ class SalesReportServiceProvider implements ServiceProviderInterface
     public function register(BaseApplication $app)
     {
         // Routingを追加
-        $admin = $app['config']['admin_dir'];
+        $admin = $app['config']['admin_route'];
         $app->match($admin . 'sales_report', '\\Plugin\\SalesReport\\Controller\\SalesReportController::index')
             ->bind('admin_sales_report');
 
