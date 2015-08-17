@@ -27,6 +27,8 @@ namespace Plugin\SalesReport\Form\Type;
 use \Symfony\Component\Form\AbstractType;
 use \Symfony\Component\Form\Extension\Core\Type;
 use \Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormEvents;
 use \Symfony\Component\Validator\Constraints as Assert;
 
 class SalesReportType extends AbstractType
@@ -74,6 +76,16 @@ class SalesReportType extends AbstractType
                     'byHour' => '時間別',
                 )
             ))
+            ->addEventListener(FormEvents::POST_SUBMIT, function ($event) {
+                $form = $event->getForm();
+                $data = $form->getData();
+                if ($data['term_type'] === 'monthly' && empty($data['monthly'])) {
+                    $form['monthly']->addError(new FormError('集計月を選択してください。'));
+                } elseif ($data['term_type'] === 'term'
+                    && (empty($data['term_start']) || empty($data['term_end']))) {
+                    $form['term_start']->addError(new FormError('集計期間を正しく選択してください。'));
+                }
+            })
         ;
     }
 
