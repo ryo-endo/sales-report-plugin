@@ -56,7 +56,6 @@ class SalesReportType extends AbstractType
                 'expanded' => true,
                 'multiple' => false,
                 'empty_value' => false,
-                'empty_data' => 'byDay',
                 'choices' => array(
                     'byDay' => '日別',
                     'byMonth' => '月別',
