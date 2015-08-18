@@ -54,7 +54,7 @@ class SalesReportServiceProvider implements ServiceProviderInterface
                 'id' => 'admin_sales_report',
                 'name' => '売上集計',
                 'has_child' => 'true',
-                'icon' => 'icon-signal',
+                'icon' => 'cb-chart',
                 'child' => array(
                     array(
                         'id' => 'admin_sales_report',

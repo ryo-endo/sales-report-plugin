@@ -61,7 +61,10 @@ class SalesReportType extends AbstractType
                     'byMonth' => '月別',
                     'byWeekDay' => '曜日別',
                     'byHour' => '時間別',
-                )
+                ),
+                'constraints' => array(
+                    new Assert\NotBlank(),
+                ),
             ))
             ->addEventListener(FormEvents::POST_SUBMIT, function ($event) {
                 $form = $event->getForm();

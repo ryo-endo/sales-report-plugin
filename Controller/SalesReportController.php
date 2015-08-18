@@ -44,9 +44,12 @@ class SalesReportController
     private function response(Application $app, Request $request, $reportType = null)
     {
         /* @var $form \Symfony\Component\Form\Form */
-        $form = $app['form.factory']
-            ->createBuilder('sales_report')
-            ->getForm();
+        $builder = $app['form.factory']
+            ->createBuilder('sales_report');
+        if (!is_null($reportType) && $reportType !== 'term') {
+            $builder->remove('unit');
+        }
+        $form = $builder->getForm();
         $form->handleRequest($request);
 
         $data = array(

@@ -24,6 +24,7 @@
 {% block option %}{% endblock %}
 
 {% block table %}
+    {% if app.request.method == 'POST' %}
     <div class="row">
         <div class="col-md-12">
             <div class="box">
@@ -58,4 +59,5 @@
             </div><!-- /.box -->
         </div><!-- /.col -->
     </div>
+    {% endif %}
 {% endblock %}
