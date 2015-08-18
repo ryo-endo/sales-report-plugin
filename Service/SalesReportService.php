@@ -268,9 +268,10 @@ class SalesReportService
             /* @var $Order \Eccube\Entity\Order */
             $age = '未回答';
 
-            $birth = $Order->getCustomer()->getBirth();
-            if ($birth) {
-                $age = floor($birth->diff($now)->format('Y')) . '代';
+            $Customer = $Order->getCustomer();
+            if ($Customer) {
+                $birth = $Order->getCustomer()->getBirth();
+                $age = floor($birth->diff($now)->y / 10) * 10 . '代';
             }
             if (!array_key_exists($age, $result)) {
                 $result[$age] = 0;
