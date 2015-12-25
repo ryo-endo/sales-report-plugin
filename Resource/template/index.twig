@@ -48,6 +48,13 @@
                     useCurrent: false,
                     showTodayButton: true
                 });
+
+                $('input[id$=monthly]').datetimepicker({
+                    locale: 'ja',
+                    format: 'YYYY-MM-01',
+                    useCurrent: false,
+                    showTodayButton: true
+                });
             }
 
             $("#btn-monthly").on("click", function () {
@@ -88,7 +95,7 @@
                         <div class="form-group">
                             {{ form_label(form.monthly) }}
                             <div class="col-sm-3 col-lg-3">
-                                {{ form_widget(form.monthly) }}
+                                {{ form_widget(form.monthly, {'attr': {'placeholder': '年-月-日'}}) }}
                                 {{ form_errors(form.monthly) }}
                             </div>
                             <div class="col-sm-offset-3 col-lg-offset-3 col-sm-3 col-lg-3">
@@ -99,11 +106,11 @@
                         <div class="form-group">
                             {{ form_label(form.term_start) }}
                             <div class="col-sm-3 col-lg-3">
-                                {{ form_widget(form.term_start) }}
+                                {{ form_widget(form.term_start, {'attr': {'placeholder': '年-月-日'}}) }}
                                 {{ form_errors(form.term_start) }}
                             </div>
                             <div class="col-sm-3 col-lg-3">
-                                {{ form_widget(form.term_end) }}
+                                {{ form_widget(form.term_end, {'attr': {'placeholder': '年-月-日'}}) }}
                                 {{ form_errors(form.term_end) }}
                             </div>
                             <div class="col-sm-3 col-lg-3">

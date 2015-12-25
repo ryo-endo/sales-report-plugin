@@ -12,7 +12,7 @@
 
 {% set report_title = '期間別集計' %}
 {% set action = url('admin_sales_report_term') %}
-{% set menus = ['admin_sales_report', 'admin_sales_report_term'] %}
+{% set menus = ['admin_sales_report', 'admin_sales_report'] %}
 
 {% block chart %}
     <script>
@@ -51,11 +51,11 @@
                                 {% for date, row in rawData %}
                                     <tr>
                                         <td>{{ date }}</td>
-                                        <td>{{ row.time }}</td>
-                                        <td>{{ row.price }}</td>
+                                        <td>{{ row.time|number_format }}</td>
+                                        <td>{{ row.price|price }}</td>
                                         <td>
                                             {% if row.time > 0 %}
-                                                {{ (row.price / row.time)|round(2, 'floor') }}
+                                                {{ (row.price / row.time)|round(2, 'floor')|price }}
                                             {% else %}
                                                 -
                                             {% endif %}
