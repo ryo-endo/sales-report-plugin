@@ -271,7 +271,9 @@ class SalesReportService
             $Customer = $Order->getCustomer();
             if ($Customer) {
                 $birth = $Order->getCustomer()->getBirth();
-                $age = floor($birth->diff($now)->y / 10) * 10 . '代';
+                if (!empty($birth)) {
+                    $age = floor($birth->diff($now)->y / 10) * 10 . '代';
+                }
             }
             if (!array_key_exists($age, $result)) {
                 $result[$age] = 0;

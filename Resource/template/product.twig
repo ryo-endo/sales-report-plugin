@@ -46,10 +46,10 @@
                                 <tr>
                                     <td>{{ row.ProductClass.code }}</td>
                                     <td>{{ row.ProductClass.Product.name }}</td>
-                                    <td>{{ row.time }}</td>
-                                    <td>{{ row.quantity }}</td>
-                                    <td>{{ row.price }}</td>
-                                    <td>{{ row.total }}</td>
+                                    <td>{{ row.time|number_format }}</td>
+                                    <td>{{ row.quantity|number_format }}</td>
+                                    <td>{{ row.price|price }}</td>
+                                    <td>{{ row.total|price }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
