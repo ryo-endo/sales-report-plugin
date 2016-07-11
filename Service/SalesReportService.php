@@ -213,7 +213,7 @@ class SalesReportService
                         'time' => 0,
                     );
                 }
-                $products[$id]['total'] += $OrderDetail->getPriceIncTax();
+                $products[$id]['total'] += $OrderDetail->getTotalPrice();
                 $products[$id]['quantity'] += $OrderDetail->getQuantity();
                 $products[$id]['price'] = $OrderDetail->getPriceIncTax();
                 $products[$id]['time'] ++;
