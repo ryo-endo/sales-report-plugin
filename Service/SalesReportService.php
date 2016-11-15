@@ -12,24 +12,52 @@
 namespace Plugin\SalesReport\Service;
 
 use Eccube\Application;
+use Faker\Provider\cs_CZ\DateTime;
+use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class SalesReportService
+ */
 class SalesReportService
 {
+    /**
+     * @var Application $app
+     */
     private $app;
 
+    /**
+     * @var string $reportType
+     */
     private $reportType;
 
+    /**
+     * @var DateTime $termStart
+     */
     private $termStart;
 
+    /**
+     * @var DateTime $termEnd
+     */
     private $termEnd;
 
+    /**
+     * @var int $unit
+     */
     private $unit;
 
+    /**
+     * SalesReportService constructor.
+     * @param Application $app
+     */
     public function __construct($app)
     {
         $this->app = $app;
     }
 
+    /**
+     * @param string $reportType
+     * @return SalesReportService $this
+     */
     public function setReportType($reportType)
     {
         $this->reportType = $reportType;
@@ -37,6 +65,11 @@ class SalesReportService
         return $this;
     }
 
+    /**
+     * @param string  $termType
+     * @param Request $request
+     * @return SalesReportService $this
+     */
     public function setTerm($termType, $request)
     {
         // termStart <= X < termEnd となるように整形する
@@ -70,6 +103,10 @@ class SalesReportService
         return $this;
     }
 
+    /**
+     * @param $term
+     * @return $this
+     */
     private function setTermStart($term)
     {
         $this->termStart = $term;
@@ -77,6 +114,10 @@ class SalesReportService
         return $this;
     }
 
+    /**
+     * @param $term
+     * @return $this
+     */
     private function setTermEnd($term)
     {
         $this->termEnd = $term;
@@ -84,6 +125,9 @@ class SalesReportService
         return $this;
     }
 
+    /**
+     * @return array
+     */
     public function getData()
     {
         $app = $this->app;
@@ -107,6 +151,10 @@ class SalesReportService
             ->setParameter(':start', $this->termStart)
             ->setParameter(':end', $this->termEnd);
 
+        if ($this->reportType == 'product') {
+            $qb->orderBy('o.total', 'DESC');
+        }
+
         $result = array();
         try {
             $result = $qb->getQuery()->getResult();
@@ -116,6 +164,10 @@ class SalesReportService
         return $this->convert($result);
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     private function convert($data)
     {
         $result = array();
@@ -134,6 +186,10 @@ class SalesReportService
         return $result;
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     private function convertByTerm($data)
     {
         $start = new \DateTime($this->termStart);
@@ -143,6 +199,7 @@ class SalesReportService
 
         $raw = array();
         $price = array();
+
         for ($start; $start < $end; $start = $start->modify('+ 1 Hour')) {
             $date = $start->format($format);
             $raw[$date] = array(
@@ -158,31 +215,46 @@ class SalesReportService
                 ->getOrderDate()
                 ->format($format);
             $price[$orderDate] += $Order->getPaymentTotal();
-
             $raw[$orderDate]['price'] += $Order->getPaymentTotal();
             $raw[$orderDate]['time'] ++;
         }
 
+        $graph = array(
+            'labels' => array_keys($price),
+            'datasets' => [
+                array(
+                    'label'=> '購入合計',
+                    'data' => array_values($price),
+                    'lineTension' => 0.1,
+                    'backgroundColor' => 'rgba(75,192,192,0.4)',
+                    'borderColor' => 'rgba(75,192,192,1)',
+                    'borderCapStyle' => 'butt',
+                    'borderDash' => array(),
+                    'borderDashOffset' => 0.0,
+                    'borderJoinStyle' => 'miter',
+                    'pointBorderColor' => 'rgba(75,192,192,1)',
+                    'pointBackgroundColor' => '#fff',
+                    'pointBorderWidth' => 1,
+                    'pointHoverRadius' => 5,
+                    'pointHoverBackgroundColor' => 'rgba(75,192,192,1)',
+                    'pointHoverBorderColor' => 'rgba(220,220,220,1)',
+                    'pointHoverBorderWidth' => 2,
+                    'pointRadius' => 1,
+                    'pointHitRadius' => 10,
+                    'spanGaps' => false,
+                ),
+            ],
+        );
+
         return array(
             'raw' => $raw,
-            'graph' => array(
-                'labels' => array_keys($price),
-                'datasets' => array(
-                    array(
-                        'label' => "購入金額",
-                        'fillColor' => 'rgba(255,255,255,0.0)',
-                        'strokeColor' => 'rgba(151,187,205,1)',
-                        'pointColor' => 'rgba(151,187,205,1)',
-                        'pointStrokeColor' => '#fff',
-                        'pointHighlightFill' => '#fff',
-                        'pointHighlightStroke' => 'rgba(151,187,205,1)',
-                        'data' => array_values($price),
-                    ),
-                ),
-            )
+            'graph' => $graph,
         );
     }
 
+    /**
+     * @return mixed
+     */
     private function formatUnit()
     {
         $unit = array(
@@ -191,9 +263,14 @@ class SalesReportService
             'byWeekDay' => 'D',
             'byHour' => 'H',
         );
+
         return $unit[$this->unit];
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     private function convertByProduct($data)
     {
         $products = array();
@@ -213,57 +290,82 @@ class SalesReportService
                         'time' => 0,
                     );
                 }
-                $products[$id]['total'] += $OrderDetail->getPriceIncTax();
                 $products[$id]['quantity'] += $OrderDetail->getQuantity();
                 $products[$id]['price'] = $OrderDetail->getPriceIncTax();
                 $products[$id]['time'] ++;
             }
         }
 
-        $result = array();
         $i = 0;
-        foreach ($products as $product) {
-            $result[] = array(
-                'label' => $product['ProductClass']->getProduct()->getName(),
-                'value' => $product['total'],
-                'color' => $this->getColor($i),
-                'highlight' => $this->getColor($i, 'highlight'),
-            );
+        $label = array();
+        $data = array();
+        $backgroundColor = array();
+
+        foreach ($products as $key => $product) {
+            $total =  $product['price'] * $product['quantity'];
+            $products[$key]['total'] = $total;
+            $backgroundColor[$i] = $this->getColor($i);
+            if ($i >= 10) {
+                $i = 10;
+                $data[$i] += $total;
+                $label[$i] = 'Other';
+            } else {
+                $label[$i] = $product['ProductClass']->getProduct()->getName();
+                $data[$i] = $total;
+                $i++;
+            }
         }
+
+        $result = array(
+            'labels' => $label,
+            'datasets' => [
+                array(
+                    'data' => $data,
+                    'backgroundColor' => $backgroundColor,
+                ),
+            ],
+        );
 
         return array(
             'raw' => $products,
-            'graph' => $result
+            'graph' => $result,
         );
     }
 
-    private function getColor($i, $type = 'color')
+    /**
+     * @param $index
+     * @return mixed
+     */
+    private function getColor($index)
     {
         $map = array(
-            array(
-                'color' => '#F7464A',
-                'highlight' => 'FF5A5E',
-            ),
-            array(
-                'color' => '#46BFBD',
-                'highlight' => '#5AD3D1',
-            ),
-            array(
-                'color' => '#FDB45C',
-                'highlight' => '#FFC870',
-            ),
+            "#FF6384",
+            "#36A2EB",
+            "#FFCE56",
+            "#5319e7",
+            "#d93f0b",
+            "#55a532",
+            "#1d76db",
+            "#bfd4f2",
+            "#cc317c",
+            "#006b75",
+            "#444",
         );
 
-        $no = $i % count($map);
-
-        return $map[$no][$type];
+        return $map[$index];
     }
 
+    /**
+     * @param $data
+     * @return array
+     */
     private function convertByAge($data)
     {
         $raw = array();
         $result = array();
         $now = new \DateTime();
+        $backgroundColor = array();
+        $i = 0;
         foreach ($data as $Order) {
             /* @var $Order \Eccube\Entity\Order */
             $age = '未回答';
@@ -272,7 +374,7 @@ class SalesReportService
             if ($Customer) {
                 $birth = $Order->getCustomer()->getBirth();
                 if (!empty($birth)) {
-                    $age = floor($birth->diff($now)->y / 10) * 10 . '代';
+                    $age = (floor($birth->diff($now)->y / 10) * 10).'代';
                 }
             }
             if (!array_key_exists($age, $result)) {
@@ -285,23 +387,26 @@ class SalesReportService
             $result[$age] += $Order->getPaymentTotal();
             $raw[$age]['total'] += $Order->getPaymentTotal();
             $raw[$age]['time'] ++;
+            $backgroundColor[$i] = $this->getColor($i);
+            $i++;
         }
+
+        $graph = array(
+            'labels' => array_keys($result),
+            'datasets' => [
+                array(
+                    'label' => "購入合計",
+                    'backgroundColor' => $backgroundColor,
+                    'borderColor' => $backgroundColor,
+                    'borderWidth' => 1,
+                    'data' => array_values($result),
+                ),
+            ],
+        );
 
         return array(
             'raw' => $raw,
-            'graph' => array(
-                'labels' => array_keys($result),
-                'datasets' => array(
-                    array(
-                        'label' => "My First dataset",
-                        'fillColor' => "rgba(220,220,220,0.5)",
-                        'strokeColor' => "rgba(220,220,220,0.8)",
-                        'highlightFill' => "rgba(220,220,220,0.75)",
-                        'highlightStroke' => "rgba(220,220,220,1)",
-                        'data' => array_values($result),
-                    ),
-                ),
-            )
+            'graph' => $graph,
         );
     }
 }

@@ -12,14 +12,21 @@
 namespace Plugin\SalesReport\Form\Type;
 
 use \Symfony\Component\Form\AbstractType;
-use \Symfony\Component\Form\Extension\Core\Type;
 use \Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
 use \Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Class SalesReportType
+ */
 class SalesReportType extends AbstractType
 {
+    /**
+     * buildForm Sale Report
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -33,6 +40,7 @@ class SalesReportType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
+                'data' => new \DateTime(),
             ))
             ->add('term_start', 'date', array(
                 'label' => '期間集計(FROM)',
@@ -41,6 +49,7 @@ class SalesReportType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
+                'data' => new \DateTime(),
             ))
             ->add('term_end', 'date', array(
                 'label' => '期間集計(TO)',
@@ -49,6 +58,7 @@ class SalesReportType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
+                'data' => new \DateTime(),
             ))
             ->add('unit', 'choice', array(
                 'label' => '集計単位',
@@ -79,6 +89,10 @@ class SalesReportType extends AbstractType
         ;
     }
 
+    /**
+     * get sale report form name
+     * @return string
+     */
     public function getName()
     {
         return 'sales_report';

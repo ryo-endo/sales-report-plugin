@@ -11,42 +11,54 @@
 
 namespace Plugin\SalesReport\ServiceProvider;
 
-use Eccube\Application;
 use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
+use Plugin\SalesReport\Service\SalesReportService;
+use Plugin\SalesReport\Form\Type\SalesReportType;
+use Plugin\SalesReport\Util\Util;
 
+/**
+ * Class SalesReportServiceProvider
+ */
 class SalesReportServiceProvider implements ServiceProviderInterface
 {
+    /**
+     * register
+     * @param BaseApplication $app
+     */
     public function register(BaseApplication $app)
     {
         // Routingを追加
         $admin = $app['config']['admin_route'];
-        $app->match($admin . '/sales_report', '\\Plugin\\SalesReport\\Controller\\SalesReportController::index')
+        $app->match($admin.'/sales_report', '\\Plugin\\SalesReport\\Controller\\SalesReportController::index')
             ->bind('admin_sales_report');
 
-        $app->match($admin . '/sales_report/term', '\\Plugin\\SalesReport\\Controller\\SalesReportController::term')
+        $app->match($admin.'/sales_report/term', '\\Plugin\\SalesReport\\Controller\\SalesReportController::term')
             ->bind('admin_sales_report_term');
 
-        $app->match($admin . '/sales_report/member', '\\Plugin\\SalesReport\\Controller\\SalesReportController::member')
-            ->bind('admin_sales_report_member');
-
-        $app->match($admin . '/sales_report/age', '\\Plugin\\SalesReport\\Controller\\SalesReportController::age')
+        $app->match($admin.'/sales_report/age', '\\Plugin\\SalesReport\\Controller\\SalesReportController::age')
             ->bind('admin_sales_report_age');
 
-        $app->match($admin . '/sales_report/product', '\\Plugin\\SalesReport\\Controller\\SalesReportController::product')
+        $app->match($admin.'/sales_report/product', '\\Plugin\\SalesReport\\Controller\\SalesReportController::product')
             ->bind('admin_sales_report_product');
 
         // Formの定義
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
-            $types[] = new \Plugin\SalesReport\Form\Type\SalesReportType();
+            $types[] = new SalesReportType();
 
             return $types;
         }));
 
         // Serviceの定義
         $app['eccube.plugin.service.sales_report'] = $app->share(function () use ($app) {
-            return new \Plugin\SalesReport\Service\SalesReportService($app);
+
+            return new SalesReportService($app);
         });
+
+        // initialize logger (for 3.0.0 - 3.0.8)
+        if (!Util::isSupportNewHookpoint()) {
+            eccube_log_init($app);
+        }
 
         // サブナビの拡張
         $app['config'] = $app->share($app->extend('config', function ($config) {
@@ -80,6 +92,10 @@ class SalesReportServiceProvider implements ServiceProviderInterface
         }));
     }
 
+    /**
+     * boot
+     * @param BaseApplication $app
+     */
     public function boot(BaseApplication $app)
     {
     }

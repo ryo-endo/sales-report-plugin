@@ -23,11 +23,7 @@
     <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment.min.js"></script>
     <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/moment-ja.js"></script>
     <script src="{{ app.config.admin_urlpath }}/assets/js/vendor/bootstrap-datetimepicker.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.js"></script>
-    <script>
-        Chart.defaults.global.responsive = true;
-        var ctx = document.getElementById("chart").getContext("2d");
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.3.0/Chart.js"></script>
     {% block chart %}{% endblock %}
     <script>
         $(function () {
@@ -46,7 +42,8 @@
                     locale: 'ja',
                     format: 'YYYY-MM-DD',
                     useCurrent: false,
-                    showTodayButton: true
+                    showTodayButton: true,
+                    defaultViewDate: '2016-1-12'
                 });
 
                 $('input[id$=monthly]').datetimepicker({
@@ -127,8 +124,8 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div style="width: 100%">
-                    <canvas id="chart" class="col-md-12"></canvas>
+                <div style="width: 65%;margin-left: 15%;">
+                    <canvas id="chart"></canvas>
                 </div>
             </div>
         </div>

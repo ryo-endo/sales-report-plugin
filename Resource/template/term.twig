@@ -17,7 +17,17 @@
 {% block chart %}
     <script>
         var graphData = {{ graphData|raw }};
-        var LineChart = new Chart(ctx).Line(graphData);
+        var config = {
+            type: 'line',
+            data: graphData,
+            options: {
+                responsive: true
+            }
+        };
+        window.onload = function() {
+            var ctx = document.getElementById("chart").getContext("2d");
+            var barChart = new Chart(ctx, config);
+        };
     </script>
 {% endblock %}
 
@@ -34,6 +44,9 @@
 {% block table %}
     {% if app.request.method == 'POST' %}
     <div class="row">
+        <div class="flR" style="margin: 10px 20px 10px 0;">
+            <a id="btn-term" class="btn btn-default">CSV ダウンロード</a>
+        </div>
         <div class="col-md-12">
             <div class="box">
                 <div class="box-body no-header no-padding">
