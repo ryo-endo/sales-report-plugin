@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Recommend Product plugin
+ * This file is part of the Sales Report plugin
  *
  * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
  *

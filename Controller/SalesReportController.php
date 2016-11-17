@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Related Product plugin
+ * This file is part of the Sales Report plugin
  *
  * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
  *
@@ -104,85 +104,5 @@ class SalesReportController
                 'type' => $reportType,
             )
         );
-    }
-    /**
-     * CSVの出力.
-     *
-     * @param Application $app
-     * @param Request     $request
-     *
-     * @return StreamedResponse
-     */
-    public function export(Application $app, Request $request)
-    {
-        // タイムアウトを無効にする.
-        set_time_limit(0);
-
-        // sql loggerを無効にする.
-        $em = $app['orm.em'];
-        $em->getConfiguration()->setSQLLogger(null);
-
-        $response = new StreamedResponse();
-        $response->setCallback(function () use ($app, $request) {
-
-            // CSV種別を元に初期化.
-            $app['eccube.service.csv.export']->initCsvType(CsvType::CSV_TYPE_PRODUCT);
-
-            // ヘッダ行の出力.
-            $app['eccube.service.csv.export']->exportHeader();
-
-            // 商品データ検索用のクエリビルダを取得.
-            $qb = $app['eccube.service.csv.export']
-                ->getProductQueryBuilder($request);
-
-            // joinする場合はiterateが使えないため, select句をdistinctする.
-            // http://qiita.com/suin/items/2b1e98105fa3ef89beb7
-            // distinctのmysqlとpgsqlの挙動をあわせる.
-            // http://uedatakeshi.blogspot.jp/2010/04/distinct-oeder-by-postgresmysql.html
-            $qb->resetDQLPart('select')
-                ->resetDQLPart('orderBy')
-                ->select('p')
-                ->orderBy('p.update_date', 'DESC')
-                ->distinct();
-
-            // データ行の出力.
-            $app['eccube.service.csv.export']->setExportQueryBuilder($qb);
-            $app['eccube.service.csv.export']->exportData(function ($entity, $csvService) {
-                $Csvs = $csvService->getCsvs();
-
-                /** @var $Product \Eccube\Entity\Product */
-                $Product = $entity;
-
-                /* @var $Product \Eccube\Entity\ProductClass[] */
-                $ProductClassess = $Product->getProductClasses();
-
-                foreach ($ProductClassess as $ProductClass) {
-                    $row = array();
-
-                    // CSV出力項目と合致するデータを取得.
-                    foreach ($Csvs as $Csv) {
-                        // 商品データを検索.
-                        $data = $csvService->getData($Csv, $Product);
-                        if (is_null($data)) {
-                            // 商品規格情報を検索.
-                            $data = $csvService->getData($Csv, $ProductClass);
-                        }
-                        $row[] = $data;
-                    }
-
-                    //$row[] = number_format(memory_get_usage(true));
-                    // 出力.
-                    $csvService->fputcsv($row);
-                }
-            });
-        });
-
-        $now = new \DateTime();
-        $filename = 'product_'.$now->format('YmdHis').'.csv';
-        $response->headers->set('Content-Type', 'application/octet-stream');
-        $response->headers->set('Content-Disposition', 'attachment; filename='.$filename);
-        $response->send();
-
-        return $response;
     }
 }
