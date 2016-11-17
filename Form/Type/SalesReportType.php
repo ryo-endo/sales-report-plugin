@@ -22,6 +22,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 class SalesReportType extends AbstractType
 {
     /**
+     * @var \Eccube\Application
+     */
+    private $app;
+
+    /**
+     * RelatedProductType constructor.
+     *
+     * @param \Eccube\Application $app
+     */
+    public function __construct($app)
+    {
+        $this->app = $app;
+    }
+
+    /**
      * buildForm Sale Report.
      *
      * @param FormBuilderInterface $builder
@@ -80,10 +95,10 @@ class SalesReportType extends AbstractType
                 $form = $event->getForm();
                 $data = $form->getData();
                 if ($data['term_type'] === 'monthly' && empty($data['monthly'])) {
-                    $form['monthly']->addError(new FormError('集計月を選択してください。'));
+                    $form['monthly']->addError(new FormError($this->app->trans('plugin.sales_report.type.montly.error')));
                 } elseif ($data['term_type'] === 'term'
                     && (empty($data['term_start']) || empty($data['term_end']))) {
-                    $form['term_start']->addError(new FormError('集計期間を正しく選択してください。'));
+                    $form['term_start']->addError(new FormError($this->app->trans('plugin.sales_report.type.term_start.error')));
                 }
             })
         ;

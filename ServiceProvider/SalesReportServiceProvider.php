@@ -15,6 +15,11 @@ use Silex\ServiceProviderInterface;
 use Plugin\SalesReport\Service\SalesReportService;
 use Plugin\SalesReport\Form\Type\SalesReportType;
 use Plugin\SalesReport\Utils\Version;
+use Symfony\Component\Translation\Translator;
+use Silex\Application;
+
+// include log functions (for 3.0.0 - 3.0.11)
+require_once __DIR__.'/../log.php';
 
 /**
  * Class SalesReportServiceProvider.
@@ -44,7 +49,7 @@ class SalesReportServiceProvider implements ServiceProviderInterface
 
         // Formの定義
         $app['form.types'] = $app->share($app->extend('form.types', function ($types) use ($app) {
-            $types[] = new SalesReportType();
+            $types[] = new SalesReportType($app);
 
             return $types;
         }));
@@ -58,6 +63,16 @@ class SalesReportServiceProvider implements ServiceProviderInterface
         if (!Version::isSupportGetInstanceFunction()) {
             eccube_log_init($app);
         }
+
+        // メッセージ登録
+        $app['translator'] = $app->share($app->extend('translator', function (Translator $translator, Application $app) {
+            $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
+            if (file_exists($file)) {
+                $translator->addResource('yaml', $file, $app['locale']);
+            }
+
+            return $translator;
+        }));
 
         // サブナビの拡張
         $app['config'] = $app->share($app->extend('config', function ($config) {

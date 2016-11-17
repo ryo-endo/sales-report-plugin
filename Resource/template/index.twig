@@ -97,8 +97,10 @@
                 rows = rows.join("\n");
 
                 var csv = title + rows;
-                var ts = new Date().getTime();
+                var ts = new Date();
                 var fileName;
+                ts = ts.getFullYear().toString() + (ts.getMonth() + 1) + ts.getDate() + ts.getHours() + ts.getMinutes() + ts.getSeconds();
+
                 if(caption == ""){
                     fileName = ts + ".csv";
                 } else {

@@ -69,7 +69,7 @@ class SalesReportService
     }
 
     /**
-     * set search from => to.
+     * set term from => to.
      *
      * @param string  $termType
      * @param Request $request
@@ -269,7 +269,7 @@ class SalesReportService
     }
 
     /**
-     * formatUnit.
+     * format unit date time.
      *
      * @return array
      */
