@@ -40,7 +40,7 @@ class SalesReportService
     private $termEnd;
 
     /**
-     * @var int
+     * @var array
      */
     private $unit;
 
@@ -69,7 +69,7 @@ class SalesReportService
     }
 
     /**
-     * set term from => to.
+     * set term from , to.
      *
      * @param string  $termType
      * @param Request $request
@@ -200,6 +200,73 @@ class SalesReportService
     }
 
     /**
+     * format unit date time.
+     *
+     * @return array
+     */
+    private function formatUnit()
+    {
+        $unit = array(
+            'byDay' => 'm/d',
+            'byMonth' => 'm',
+            'byWeekDay' => 'D',
+            'byHour' => 'H',
+        );
+
+        return $unit[$this->unit];
+    }
+
+    /**
+     * sort array by value.
+     *
+     * @param string $field
+     * @param array  $array
+     * @param string $direction
+     *
+     * @return array
+     */
+    private function sortBy($field, &$array, $direction = 'desc')
+    {
+        usort($array, create_function('$a, $b', '
+            $a = $a["'.$field.'"];
+            $b = $b["'.$field.'"];
+            if ($a == $b) {
+                return 0;
+            }
+   
+            return ($a '.($direction == 'desc' ? '>' : '<').' $b) ? -1 : 1;
+	    '));
+
+        return $array;
+    }
+
+    /**
+     * get background color.
+     *
+     * @param int $index
+     *
+     * @return array
+     */
+    private function getColor($index)
+    {
+        $map = array(
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#5319e7',
+            '#d93f0b',
+            '#55a532',
+            '#1d76db',
+            '#bfd4f2',
+            '#cc317c',
+            '#006b75',
+            '#444',
+        );
+
+        return $map[$index];
+    }
+
+    /**
      * period sale report.
      *
      * @param array $data
@@ -210,6 +277,7 @@ class SalesReportService
     {
         $start = new \DateTime($this->termStart);
         $end = new \DateTime($this->termEnd);
+        $i = 0;
 
         $format = $this->formatUnit();
 
@@ -233,6 +301,15 @@ class SalesReportService
             $price[$orderDate] += $Order->getPaymentTotal();
             $raw[$orderDate]['price'] += $Order->getPaymentTotal();
             ++$raw[$orderDate]['time'];
+            $i++;
+        }
+
+        //return null and not display in screen
+        if ($i == 0) {
+            return array(
+                'raw' => null,
+                'graph' => null,
+            );
         }
 
         $graph = array(
@@ -266,23 +343,6 @@ class SalesReportService
             'raw' => $raw,
             'graph' => $graph,
         );
-    }
-
-    /**
-     * format unit date time.
-     *
-     * @return array
-     */
-    private function formatUnit()
-    {
-        $unit = array(
-            'byDay' => 'm/d',
-            'byMonth' => 'm',
-            'byWeekDay' => 'D',
-            'byHour' => 'H',
-        );
-
-        return $unit[$this->unit];
     }
 
     /**
@@ -351,7 +411,6 @@ class SalesReportService
         );
 
         //return null and not display in screen
-
         if ($i == 0) {
             return array(
                 'raw' => null,
@@ -363,57 +422,6 @@ class SalesReportService
             'raw' => $products,
             'graph' => $result,
         );
-    }
-
-    /**
-     * sort array by value.
-     *
-     * @param string $field
-     * @param array  $array
-     * @param string $direction
-     *
-     * @return array
-     */
-    private function sortBy($field, &$array, $direction = 'desc')
-    {
-        usort($array, create_function('$a, $b', '
-            $a = $a["'.$field.'"];
-            $b = $b["'.$field.'"];
-            if ($a == $b)
-            {
-                return 0;
-            }
-   
-            return ($a '.($direction == 'desc' ? '>' : '<').' $b) ? -1 : 1;
-	    '));
-
-        return $array;
-    }
-
-    /**
-     * get background color.
-     *
-     * @param int $index
-     *
-     * @return array
-     */
-    private function getColor($index)
-    {
-        $map = array(
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#5319e7',
-            '#d93f0b',
-            '#55a532',
-            '#1d76db',
-            '#bfd4f2',
-            '#cc317c',
-            '#006b75',
-            '#444',
-        );
-
-        return $map[$index];
     }
 
     /**
@@ -453,6 +461,14 @@ class SalesReportService
             ++$raw[$age]['time'];
             $backgroundColor[$i] = $this->getColor($i);
             ++$i;
+        }
+
+        //return null and not display in screen
+        if ($i == 0) {
+            return array(
+                'raw' => null,
+                'graph' => null,
+            );
         }
 
         $graph = array(

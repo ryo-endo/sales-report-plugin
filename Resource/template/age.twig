@@ -16,18 +16,19 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
 {% block chart %}
     <script>
         var graphData = {{ graphData|raw }};
-        var config = {
-            type: 'bar',
-            data: graphData,
-            options: {
-                responsive: true
-            }
-        };
         window.onload = function() {
-            //create pie chart
-            var ctx = document.getElementById("chart").getContext("2d");
-            var barChart = new Chart(ctx, config);
-
+            //create bar chart
+            if(graphData != null) {
+                var config = {
+                    type: 'bar',
+                    data: graphData,
+                    options: {
+                        responsive: true
+                    }
+                };
+                var ctx = document.getElementById("chart").getContext("2d");
+                new Chart(ctx, config);
+            }
             //export csv
             $('#export-csv').click(function () {
                 $("#age-table").tableToCSV();
@@ -39,7 +40,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
 {% block option %}{% endblock %}
 
 {% block table %}
-    {% if app.request.method == 'POST' %}
+    {% if app.request.method == 'POST' and rawData is not null %}
     <div class="row">
         <div class="flR" style="margin: 10px 20px 10px 0;">
             <a id="export-csv" class="btn btn-default" data-export="export">CSV ダウンロード</a>
