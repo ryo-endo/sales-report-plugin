@@ -7,18 +7,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Plugin\SalesReport\Utils;
 
 use Eccube\Common\Constant;
 
 /**
  * Class Version.
- * Util to check version
+ * Util to check version.
  */
 class Version
 {
     /**
-     * Check version to support get instance function. (monolog, new style, ...)
+     * Check version to support get instance function. (monolog, new style, ...).
      *
      * @return bool|int|mixed|void
      */

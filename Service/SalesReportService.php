@@ -15,37 +15,38 @@ use Faker\Provider\cs_CZ\DateTime;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Class SalesReportService
+ * Class SalesReportService.
  */
 class SalesReportService
 {
     /**
-     * @var Application $app
+     * @var Application
      */
     private $app;
 
     /**
-     * @var string $reportType
+     * @var string
      */
     private $reportType;
 
     /**
-     * @var DateTime $termStart
+     * @var DateTime
      */
     private $termStart;
 
     /**
-     * @var DateTime $termEnd
+     * @var DateTime
      */
     private $termEnd;
 
     /**
-     * @var int $unit
+     * @var int
      */
     private $unit;
 
     /**
      * SalesReportService constructor.
+     *
      * @param Application $app
      */
     public function __construct($app)
@@ -54,8 +55,11 @@ class SalesReportService
     }
 
     /**
+     * setReportType.
+     *
      * @param string $reportType
-     * @return SalesReportService $this
+     *
+     * @return SalesReportService
      */
     public function setReportType($reportType)
     {
@@ -65,29 +69,32 @@ class SalesReportService
     }
 
     /**
+     * set search from => to.
+     *
      * @param string  $termType
      * @param Request $request
-     * @return SalesReportService $this
+     *
+     * @return SalesReportService
      */
     public function setTerm($termType, $request)
     {
         // termStart <= X < termEnd となるように整形する
         if ($termType === 'monthly') {
             $date = $request['monthly'];
-            $start = $date->format("Y-m-01 00:00:00");
+            $start = $date->format('Y-m-01 00:00:00');
             $end = $date
                 ->modify('+ 1 month')
-                ->format("Y-m-01 00:00:00");
+                ->format('Y-m-01 00:00:00');
 
             $this
                 ->setTermStart($start)
                 ->setTermEnd($end);
         } else {
             $start = $request['term_start']
-                ->format("Y-m-d 00:00:00");
+                ->format('Y-m-d 00:00:00');
             $end = $request['term_end']
                 ->modify('+ 1 day')
-                ->format("Y-m-d 00:00:00");
+                ->format('Y-m-d 00:00:00');
 
             $this
                 ->setTermStart($start)
@@ -103,28 +110,8 @@ class SalesReportService
     }
 
     /**
-     * @param $term
-     * @return $this
-     */
-    private function setTermStart($term)
-    {
-        $this->termStart = $term;
-
-        return $this;
-    }
-
-    /**
-     * @param $term
-     * @return $this
-     */
-    private function setTermEnd($term)
-    {
-        $this->termEnd = $term;
-
-        return $this;
-    }
-
-    /**
+     * query and get order data.
+     *
      * @return array
      */
     public function getData()
@@ -160,7 +147,38 @@ class SalesReportService
     }
 
     /**
-     * @param $data
+     * setTermStart.
+     *
+     * @param DateTime $term
+     *
+     * @return SalesReportService
+     */
+    private function setTermStart($term)
+    {
+        $this->termStart = $term;
+
+        return $this;
+    }
+
+    /**
+     * setTermEnd.
+     *
+     * @param DateTime $term
+     *
+     * @return SalesReportService
+     */
+    private function setTermEnd($term)
+    {
+        $this->termEnd = $term;
+
+        return $this;
+    }
+
+    /**
+     * convert to graph data by report type.
+     *
+     * @param array $data
+     *
      * @return array
      */
     private function convert($data)
@@ -182,7 +200,10 @@ class SalesReportService
     }
 
     /**
-     * @param $data
+     * period sale report.
+     *
+     * @param array $data
+     *
      * @return array
      */
     private function convertByTerm($data)
@@ -211,14 +232,14 @@ class SalesReportService
                 ->format($format);
             $price[$orderDate] += $Order->getPaymentTotal();
             $raw[$orderDate]['price'] += $Order->getPaymentTotal();
-            $raw[$orderDate]['time'] ++;
+            ++$raw[$orderDate]['time'];
         }
 
         $graph = array(
             'labels' => array_keys($price),
             'datasets' => [
                 array(
-                    'label'=> '購入合計',
+                    'label' => '購入合計',
                     'data' => array_values($price),
                     'lineTension' => 0.1,
                     'backgroundColor' => 'rgba(75,192,192,0.4)',
@@ -248,7 +269,9 @@ class SalesReportService
     }
 
     /**
-     * @return mixed
+     * formatUnit.
+     *
+     * @return array
      */
     private function formatUnit()
     {
@@ -263,7 +286,10 @@ class SalesReportService
     }
 
     /**
-     * @param $data
+     * product sale report.
+     *
+     * @param array $data
+     *
      * @return array
      */
     private function convertByProduct($data)
@@ -292,7 +318,7 @@ class SalesReportService
                 $products[$id]['quantity'] += $OrderDetail->getQuantity();
                 $products[$id]['price'] = $OrderDetail->getPriceIncTax();
                 $products[$id]['total'] = $OrderDetail->getPriceIncTax() * $OrderDetail->getQuantity();
-                $products[$id]['time'] ++;
+                ++$products[$id]['time'];
             }
         }
         //sort by total money
@@ -311,7 +337,7 @@ class SalesReportService
                 $label[$i] = $product['ProductClass']->getProduct()->getName();
                 $graphData[$i] = $total;
             }
-            $i++;
+            ++$i;
         }
 
         $result = array(
@@ -330,48 +356,62 @@ class SalesReportService
         );
     }
 
+    /**
+     * sort array by value.
+     *
+     * @param string $field
+     * @param array  $array
+     * @param string $direction
+     *
+     * @return array
+     */
     private function sortBy($field, &$array, $direction = 'desc')
     {
         usort($array, create_function('$a, $b', '
-            $a = $a["' . $field . '"];
-            $b = $b["' . $field . '"];
-    
+            $a = $a["'.$field.'"];
+            $b = $b["'.$field.'"];
             if ($a == $b)
             {
                 return 0;
             }
-    
-            return ($a ' . ($direction == 'desc' ? '>' : '<') . ' $b) ? -1 : 1;
+   
+            return ($a '.($direction == 'desc' ? '>' : '<').' $b) ? -1 : 1;
 	    '));
 
         return $array;
     }
 
     /**
-     * @param $index
-     * @return mixed
+     * get background color.
+     *
+     * @param int $index
+     *
+     * @return array
      */
     private function getColor($index)
     {
         $map = array(
-            "#FF6384",
-            "#36A2EB",
-            "#FFCE56",
-            "#5319e7",
-            "#d93f0b",
-            "#55a532",
-            "#1d76db",
-            "#bfd4f2",
-            "#cc317c",
-            "#006b75",
-            "#444",
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#5319e7',
+            '#d93f0b',
+            '#55a532',
+            '#1d76db',
+            '#bfd4f2',
+            '#cc317c',
+            '#006b75',
+            '#444',
         );
 
         return $map[$index];
     }
 
     /**
-     * @param $data
+     * age sale report.
+     *
+     * @param array $data
+     *
      * @return array
      */
     private function convertByAge($data)
@@ -401,16 +441,16 @@ class SalesReportService
             }
             $result[$age] += $Order->getPaymentTotal();
             $raw[$age]['total'] += $Order->getPaymentTotal();
-            $raw[$age]['time'] ++;
+            ++$raw[$age]['time'];
             $backgroundColor[$i] = $this->getColor($i);
-            $i++;
+            ++$i;
         }
 
         $graph = array(
             'labels' => array_keys($result),
             'datasets' => [
                 array(
-                    'label' => "購入合計",
+                    'label' => '購入合計',
                     'backgroundColor' => $backgroundColor,
                     'borderColor' => $backgroundColor,
                     'borderWidth' => 1,

@@ -17,12 +17,13 @@ use Plugin\SalesReport\Form\Type\SalesReportType;
 use Plugin\SalesReport\Utils\Version;
 
 /**
- * Class SalesReportServiceProvider
+ * Class SalesReportServiceProvider.
  */
 class SalesReportServiceProvider implements ServiceProviderInterface
 {
     /**
-     * register
+     * register.
+     *
      * @param BaseApplication $app
      */
     public function register(BaseApplication $app)
@@ -91,7 +92,8 @@ class SalesReportServiceProvider implements ServiceProviderInterface
     }
 
     /**
-     * boot
+     * boot.
+     *
      * @param BaseApplication $app
      */
     public function boot(BaseApplication $app)

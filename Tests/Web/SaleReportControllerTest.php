@@ -10,22 +10,30 @@
 
 namespace Plugin\SalesReport\Tests\Web;
 
+/**
+ * Class SaleReportControllerTest.
+ */
 class SaleReportControllerTest extends SaleReportCommon
 {
     /**
-     * @param $type
-     * @param $expected
+     * testRouting.
+     *
+     * @param string $type
+     * @param string $expected
      * @dataProvider dataRoutingProvider
      */
     public function testRouting($type, $expected)
     {
         $crawler = $this->client->request('GET', $this->app->url('admin_sales_report'.$type));
-
         $this->assertTrue($this->client->getResponse()->isSuccessful());
-
         $this->assertContains($expected, $crawler->html());
     }
-    
+
+    /**
+     * dataRoutingProvider.
+     *
+     * @return array
+     */
     public function dataRoutingProvider()
     {
         return array(
@@ -37,16 +45,17 @@ class SaleReportControllerTest extends SaleReportCommon
     }
 
     /**
-     * @param $type
-     * @param $termType
-     * @param null $unit
-     * @param $expected
+     * testReportByMonth.
+     *
+     * @param string $type
+     * @param string $termType
+     * @param string $expected
+     * @param array  $unit
      * @dataProvider dataReportProvider
      */
-    public function testReportByMonth($type, $termType, $unit = null, $expected)
+    public function testReportByMonth($type, $termType, $expected, $unit = null)
     {
         $this->createOrderByCustomer(1);
-
         $current = new \DateTime();
         $arrSearch = array(
             'term_type' => $termType,
@@ -62,17 +71,16 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
         }
-
-        $crawler = $this->client->request('POST',
-            $this->app->url('admin_sales_report'.$type),
-            array(
-                'sales_report' => $arrSearch
-            )
-        );
+        $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
 
         $this->assertContains($expected, $crawler->html());
     }
 
+    /**
+     * dataReportProvider.
+     *
+     * @return array
+     */
     public function dataReportProvider()
     {
         return array(
@@ -95,7 +103,7 @@ class SaleReportControllerTest extends SaleReportCommon
             array('_product', 'monthly', null, '商品名'),
             array('_product', 'term', null, '商品名'),
             array('_age', 'monthly', null, '年齢'),
-            array('_age', 'term', null, '年齢')
+            array('_age', 'term', null, '年齢'),
         );
     }
 }

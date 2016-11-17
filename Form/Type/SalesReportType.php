@@ -10,19 +10,20 @@
 
 namespace Plugin\SalesReport\Form\Type;
 
-use \Symfony\Component\Form\AbstractType;
-use \Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
-use \Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class SalesReportType
+ * Class SalesReportType.
  */
 class SalesReportType extends AbstractType
 {
     /**
-     * buildForm Sale Report
+     * buildForm Sale Report.
+     *
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
@@ -89,12 +90,12 @@ class SalesReportType extends AbstractType
     }
 
     /**
-     * get sale report form name
+     * get sale report form name.
+     *
      * @return string
      */
     public function getName()
     {
         return 'sales_report';
     }
-
 }

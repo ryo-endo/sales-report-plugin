@@ -15,14 +15,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * Class SalesReportController
- * @package Plugin\SalesReport\Controller
+ * Class SalesReportController.
  */
 class SalesReportController
 {
     /**
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index(Application $app, Request $request)
@@ -32,7 +32,8 @@ class SalesReportController
 
     /**
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function term(Application $app, Request $request)
@@ -42,7 +43,8 @@ class SalesReportController
 
     /**
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function product(Application $app, Request $request)
@@ -52,7 +54,8 @@ class SalesReportController
 
     /**
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function age(Application $app, Request $request)
@@ -62,8 +65,9 @@ class SalesReportController
 
     /**
      * @param Application $app
-     * @param Request $request
-     * @param null $reportType
+     * @param Request     $request
+     * @param null        $reportType
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     private function response(Application $app, Request $request, $reportType = null)
@@ -103,8 +107,10 @@ class SalesReportController
     }
     /**
      * CSVの出力.
+     *
      * @param Application $app
-     * @param Request $request
+     * @param Request     $request
+     *
      * @return StreamedResponse
      */
     public function export(Application $app, Request $request)
@@ -142,13 +148,12 @@ class SalesReportController
             // データ行の出力.
             $app['eccube.service.csv.export']->setExportQueryBuilder($qb);
             $app['eccube.service.csv.export']->exportData(function ($entity, $csvService) {
-
                 $Csvs = $csvService->getCsvs();
 
                 /** @var $Product \Eccube\Entity\Product */
                 $Product = $entity;
 
-                /** @var $Product \Eccube\Entity\ProductClass[] */
+                /* @var $Product \Eccube\Entity\ProductClass[] */
                 $ProductClassess = $Product->getProductClasses();
 
                 foreach ($ProductClassess as $ProductClass) {
@@ -173,9 +178,9 @@ class SalesReportController
         });
 
         $now = new \DateTime();
-        $filename = 'product_' . $now->format('YmdHis') . '.csv';
+        $filename = 'product_'.$now->format('YmdHis').'.csv';
         $response->headers->set('Content-Type', 'application/octet-stream');
-        $response->headers->set('Content-Disposition', 'attachment; filename=' . $filename);
+        $response->headers->set('Content-Disposition', 'attachment; filename='.$filename);
         $response->send();
 
         return $response;
