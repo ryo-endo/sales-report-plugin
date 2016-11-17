@@ -27,29 +27,24 @@
     {% block chart %}{% endblock %}
     <script>
         $(function () {
-
             var inputDate = document.createElement('input');
             inputDate.setAttribute('type', 'date');
             if (inputDate.type !== 'date') {
                 $('input[id$=_start]').datetimepicker({
                     locale: 'ja',
                     format: 'YYYY-MM-DD',
-                    useCurrent: false,
-                    showTodayButton: true
+                    useCurrent: false
                 });
 
                 $('input[id$=_end]').datetimepicker({
                     locale: 'ja',
                     format: 'YYYY-MM-DD',
-                    useCurrent: false,
-                    showTodayButton: true,
-                    defaultViewDate: '2016-1-12'
+                    showTodayButton: true
                 });
 
                 $('input[id$=monthly]').datetimepicker({
                     locale: 'ja',
                     format: 'YYYY-MM-01',
-                    useCurrent: false,
                     showTodayButton: true
                 });
             }
@@ -58,11 +53,74 @@
                 $("#{{ form.term_type.vars.id }}").val('monthly');
                 document.form1.submit();
             });
+
             $("#btn-term").on("click", function () {
                 $("#{{ form.term_type.vars.id }}").val('term');
                 document.form1.submit();
             });
+
         });
+
+        jQuery.fn.tableToCSV = function() {
+            var clean_text = function(text){
+                text = text.replace(/"/g, '""');
+                return '"' + text + '"';
+            };
+
+            $(this).each(function(){
+                var table = $(this);
+                var caption = $('.box-title').text();
+                var title = [];
+                var rows = [];
+
+                $(this).find('tr').each(function(){
+                    var data = [];
+                    $(this).find('th').each(function(){
+                        var text = clean_text($(this).text());
+                        title.push(text);
+                    });
+                    $(this).find('td').each(function(){
+                        var td = $(this);
+                        var text = td.text();
+                        if(!td.hasClass('price-format')) {
+                            if(td.hasClass('hidden')) {
+                                text = text.trim();
+                            }
+                            text = clean_text(text);
+                            data.push(text);
+                        }
+                    });
+                    data = data.join(",");
+                    rows.push(data);
+                });
+                title = title.join(",");
+                rows = rows.join("\n");
+
+                var csv = title + rows;
+                var ts = new Date().getTime();
+                var fileName;
+                if(caption == ""){
+                    fileName = ts + ".csv";
+                } else {
+                    fileName = caption + "_" + ts + ".csv";
+                }
+
+                // if microsoft IE
+                if (navigator.msSaveBlob) {
+                    navigator.msSaveBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), fileName);
+                } else {
+                    var uri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                    var download_link = document.createElement('a');
+                    download_link.href = uri;
+                    download_link.download = fileName;
+                    document.body.appendChild(download_link);
+                    download_link.click();
+                    document.body.removeChild(download_link);
+                }
+
+            });
+        };
+
     </script>
 {% endblock javascript %}
 

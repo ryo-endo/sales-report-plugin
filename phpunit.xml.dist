@@ -24,7 +24,7 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./</directory>
             <exclude>
-                <directory suffix=".php">./Migration</directory>
+                <directory suffix=".php">./Resource</directory>
                 <directory suffix=".php">./Tests</directory>
                 <file>./PluginManager.php</file>
             </exclude>

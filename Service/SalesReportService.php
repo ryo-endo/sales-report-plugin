@@ -1,13 +1,12 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\SalesReport\Service;
 
@@ -151,10 +150,6 @@ class SalesReportService
             ->setParameter(':start', $this->termStart)
             ->setParameter(':end', $this->termEnd);
 
-        if ($this->reportType == 'product') {
-            $qb->orderBy('o.total', 'DESC');
-        }
-
         $result = array();
         try {
             $result = $qb->getQuery()->getResult();
@@ -273,6 +268,10 @@ class SalesReportService
      */
     private function convertByProduct($data)
     {
+        $i = 0;
+        $label = array();
+        $graphData = array();
+        $backgroundColor = array();
         $products = array();
         foreach ($data as $Order) {
             /* @var $Order \Eccube\Entity\Order */
@@ -292,35 +291,34 @@ class SalesReportService
                 }
                 $products[$id]['quantity'] += $OrderDetail->getQuantity();
                 $products[$id]['price'] = $OrderDetail->getPriceIncTax();
+                $products[$id]['total'] = $OrderDetail->getPriceIncTax() * $OrderDetail->getQuantity();
                 $products[$id]['time'] ++;
             }
         }
-
-        $i = 0;
-        $label = array();
-        $data = array();
-        $backgroundColor = array();
-
+        //sort by total money
+        $products = $this->sortBy('total', $products);
         foreach ($products as $key => $product) {
-            $total =  $product['price'] * $product['quantity'];
-            $products[$key]['total'] = $total;
+            $total = $product['total'];
             $backgroundColor[$i] = $this->getColor($i);
             if ($i >= 10) {
-                $i = 10;
-                $data[$i] += $total;
+                if ($i == 10) {
+                    $graphData[$i] = $total;
+                } else {
+                    $graphData[$i] += $total;
+                }
                 $label[$i] = 'Other';
             } else {
                 $label[$i] = $product['ProductClass']->getProduct()->getName();
-                $data[$i] = $total;
-                $i++;
+                $graphData[$i] = $total;
             }
+            $i++;
         }
 
         $result = array(
             'labels' => $label,
             'datasets' => [
                 array(
-                    'data' => $data,
+                    'data' => $graphData,
                     'backgroundColor' => $backgroundColor,
                 ),
             ],
@@ -330,6 +328,23 @@ class SalesReportService
             'raw' => $products,
             'graph' => $result,
         );
+    }
+
+    private function sortBy($field, &$array, $direction = 'desc')
+    {
+        usort($array, create_function('$a, $b', '
+            $a = $a["' . $field . '"];
+            $b = $b["' . $field . '"];
+    
+            if ($a == $b)
+            {
+                return 0;
+            }
+    
+            return ($a ' . ($direction == 'desc' ? '>' : '<') . ' $b) ? -1 : 1;
+	    '));
+
+        return $array;
     }
 
     /**

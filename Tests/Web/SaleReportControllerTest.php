@@ -1,13 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: lqdung
- * Date: 6/8/2016
- * Time: 11:34 AM
+/*
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace Plugin\SalesReport\Tests\Web;
-
 
 class SaleReportControllerTest extends SaleReportCommon
 {

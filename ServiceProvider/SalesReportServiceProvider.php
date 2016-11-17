@@ -1,13 +1,12 @@
 <?php
 /*
-* This file is part of EC-CUBE
-*
-* Copyright(c) 2000-2015 LOCKON CO.,LTD. All Rights Reserved.
-* http://www.lockon.co.jp/
-*
-* For the full copyright and license information, please view the LICENSE
-* file that was distributed with this source code.
-*/
+ * This file is part of the Related Product plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Plugin\SalesReport\ServiceProvider;
 
@@ -15,7 +14,7 @@ use Silex\Application as BaseApplication;
 use Silex\ServiceProviderInterface;
 use Plugin\SalesReport\Service\SalesReportService;
 use Plugin\SalesReport\Form\Type\SalesReportType;
-use Plugin\SalesReport\Util\Util;
+use Plugin\SalesReport\Utils\Version;
 
 /**
  * Class SalesReportServiceProvider
@@ -51,12 +50,11 @@ class SalesReportServiceProvider implements ServiceProviderInterface
 
         // Serviceの定義
         $app['eccube.plugin.service.sales_report'] = $app->share(function () use ($app) {
-
             return new SalesReportService($app);
         });
 
         // initialize logger (for 3.0.0 - 3.0.8)
-        if (!Util::isSupportNewHookpoint()) {
+        if (!Version::isSupportGetInstanceFunction()) {
             eccube_log_init($app);
         }
 
