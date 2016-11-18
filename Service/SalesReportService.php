@@ -13,6 +13,7 @@ namespace Plugin\SalesReport\Service;
 use Eccube\Application;
 use Faker\Provider\cs_CZ\DateTime;
 use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\NoResultException;
 
 /**
  * Class SalesReportService.
@@ -40,7 +41,7 @@ class SalesReportService
     private $termEnd;
 
     /**
-     * @var array
+     * @var string
      */
     private $unit;
 
@@ -137,10 +138,12 @@ class SalesReportService
             ->setParameter(':start', $this->termStart)
             ->setParameter(':end', $this->termEnd);
 
+        log_info('SalesReport Plugin : search parameters ', array('From' => $this->termStart, 'To' => $this->termEnd));
         $result = array();
         try {
             $result = $qb->getQuery()->getResult();
         } catch (NoResultException $e) {
+            log_info('SalesReport Plugin : Exception '.$e->getMessage());
         }
 
         return $this->convert($result);
@@ -277,15 +280,12 @@ class SalesReportService
     {
         $start = new \DateTime($this->termStart);
         $end = new \DateTime($this->termEnd);
-        $i = 0;
-
-        $format = $this->formatUnit();
-
         $raw = array();
         $price = array();
-
-        for ($start; $start < $end; $start = $start->modify('+ 1 Hour')) {
-            $date = $start->format($format);
+        $i = 0;
+        $format = $this->formatUnit();
+        for ($term = $start; $term < $end; $term = $term->modify('+ 1 Hour')) {
+            $date = $term->format($format);
             $raw[$date] = array(
                 'price' => 0,
                 'time' => 0,
@@ -301,9 +301,10 @@ class SalesReportService
             $price[$orderDate] += $Order->getPaymentTotal();
             $raw[$orderDate]['price'] += $Order->getPaymentTotal();
             ++$raw[$orderDate]['time'];
-            $i++;
+            ++$i;
         }
 
+        log_info('SalesReport Plugin : term report ', array('result count' => count($raw)));
         //return null and not display in screen
         if ($i == 0) {
             return array(
@@ -383,6 +384,7 @@ class SalesReportService
         }
         //sort by total money
         $products = $this->sortBy('total', $products);
+        log_info('SalesReport Plugin : product report ', array('result count' => count($products)));
         foreach ($products as $key => $product) {
             $total = $product['total'];
             $backgroundColor[$i] = $this->getColor($i);
@@ -441,7 +443,6 @@ class SalesReportService
         foreach ($data as $Order) {
             /* @var $Order \Eccube\Entity\Order */
             $age = '未回答';
-
             $Customer = $Order->getCustomer();
             if ($Customer) {
                 $birth = $Order->getCustomer()->getBirth();
@@ -463,6 +464,7 @@ class SalesReportService
             ++$i;
         }
 
+        log_info('SalesReport Plugin : term report ', array('result count' => count($raw)));
         //return null and not display in screen
         if ($i == 0) {
             return array(

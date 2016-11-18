@@ -36,7 +36,7 @@ class SaleReportCommon extends AbstractAdminWebTestCase
             $arrCustomer[] = $Customer->getId();
             $Customer->setBirth($age);
             $this->app['orm.em']->persist($Customer);
-            $this->app['orm.em']->flush();
+            $this->app['orm.em']->flush($Customer);
         }
 
         return $arrCustomer;

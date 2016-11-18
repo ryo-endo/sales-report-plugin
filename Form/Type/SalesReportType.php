@@ -95,9 +95,8 @@ class SalesReportType extends AbstractType
                 $form = $event->getForm();
                 $data = $form->getData();
                 if ($data['term_type'] === 'monthly' && empty($data['monthly'])) {
-                    $form['monthly']->addError(new FormError($this->app->trans('plugin.sales_report.type.montly.error')));
-                } elseif ($data['term_type'] === 'term'
-                    && (empty($data['term_start']) || empty($data['term_end']))) {
+                    $form['monthly']->addError(new FormError($this->app->trans('plugin.sales_report.type.monthly.error')));
+                } elseif ($data['term_type'] === 'term' && (empty($data['term_start']) || empty($data['term_end']))) {
                     $form['term_start']->addError(new FormError($this->app->trans('plugin.sales_report.type.term_start.error')));
                 }
             })

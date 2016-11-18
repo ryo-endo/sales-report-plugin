@@ -16,7 +16,7 @@ namespace Plugin\SalesReport\Tests\Web;
 class SaleReportControllerTest extends SaleReportCommon
 {
     /**
-     * testRouting.
+     * test routing admin sale report.
      *
      * @param string $type
      * @param string $expected
@@ -30,7 +30,7 @@ class SaleReportControllerTest extends SaleReportCommon
     }
 
     /**
-     * dataRoutingProvider.
+     * data routing provider.
      *
      * @return array
      */
@@ -45,7 +45,7 @@ class SaleReportControllerTest extends SaleReportCommon
     }
 
     /**
-     * testReportByMonth.
+     * test report monthly.
      *
      * @param string $type
      * @param string $termType
@@ -72,12 +72,11 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
         }
         $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
-
         $this->assertContains($expected, $crawler->html());
     }
 
     /**
-     * dataReportProvider.
+     * data report provider.
      *
      * @return array
      */

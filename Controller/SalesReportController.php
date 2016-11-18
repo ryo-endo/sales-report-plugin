@@ -12,7 +12,6 @@ namespace Plugin\SalesReport\Controller;
 
 use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * Class SalesReportController.
@@ -20,6 +19,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class SalesReportController
 {
     /**
+     * redirect by report type. default is term.
+     *
      * @param Application $app
      * @param Request     $request
      *
@@ -31,6 +32,8 @@ class SalesReportController
     }
 
     /**
+     * 期間別集計.
+     *
      * @param Application $app
      * @param Request     $request
      *
@@ -42,6 +45,8 @@ class SalesReportController
     }
 
     /**
+     * 商品別集計.
+     *
      * @param Application $app
      * @param Request     $request
      *
@@ -53,6 +58,8 @@ class SalesReportController
     }
 
     /**
+     * 年代別集計.
+     *
      * @param Application $app
      * @param Request     $request
      *
@@ -64,6 +71,8 @@ class SalesReportController
     }
 
     /**
+     * direct by report type.
+     *
      * @param Application $app
      * @param Request     $request
      * @param null        $reportType
@@ -94,6 +103,7 @@ class SalesReportController
         }
 
         $template = is_null($reportType) ? 'term' : $reportType;
+        log_info('SalesReport Plugin : render ', array('template' => $template));
 
         return $app->render(
             'SalesReport/Resource/template/'.$template.'.twig',
