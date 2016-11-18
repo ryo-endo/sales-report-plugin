@@ -14,6 +14,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -91,7 +92,7 @@ class SalesReportType extends AbstractType
                     new Assert\NotBlank(),
                 ),
             ))
-            ->addEventListener(FormEvents::POST_SUBMIT, function ($event) {
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
                 $form = $event->getForm();
                 $data = $form->getData();
                 if ($data['term_type'] === 'monthly' && empty($data['monthly'])) {

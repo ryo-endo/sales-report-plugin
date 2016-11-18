@@ -97,9 +97,8 @@ class SalesReportService
                 ->modify('+ 1 day')
                 ->format('Y-m-d 00:00:00');
 
-            $this
-                ->setTermStart($start)
-                ->setTermEnd($end);
+            $this->setTermStart($start);
+            $this->setTermEnd($end);
         }
 
         // 集計単位をせってい
