@@ -71,7 +71,7 @@ class SalesReportController
     }
 
     /**
-     * direct by report type.
+     * direct by report type(default term).
      *
      * @param Application $app
      * @param Request     $request
