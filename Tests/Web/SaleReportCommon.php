@@ -46,18 +46,16 @@ class SaleReportCommon extends AbstractAdminWebTestCase
      * createOrderByCustomer.
      *
      * @param int $number
-     *
-     * @return array
      */
     public function createOrderByCustomer($number = 5)
     {
         $arrCustomer = $this->createCustomerByNumber($number);
-        $arrOrder = array();
         for ($i = 0; $i < count($arrCustomer); ++$i) {
             $Customer = $this->app['eccube.repository.customer']->find($arrCustomer[$i]);
-            $arrOrder[] = $this->createOrder($Customer)->getId();
+            $Order = $this->createOrder($Customer);
+            $Order->setOrderStatus($this->app['eccube.repository.order_status']->find($this->app['config']['order_new']));
+            $this->app['orm.em']->persist($Order);
+            $this->app['orm.em']->flush($Order);
         }
-
-        return $arrOrder;
     }
 }

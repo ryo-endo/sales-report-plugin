@@ -170,8 +170,8 @@ class SaleReportControllerTest extends SaleReportCommon
     public function dataProductReportProvider()
     {
         return array(
-            array('_product', 'monthly', '商品名'),
-            array('_product', 'term', '商品名'),
+            array('_product', 'monthly'),
+            array('_product', 'term'),
         );
     }
 }
