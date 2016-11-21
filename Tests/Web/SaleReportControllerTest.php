@@ -30,6 +30,20 @@ class SaleReportControllerTest extends SaleReportCommon
     }
 
     /**
+     * test display today as default.
+     *
+     * @param string $type
+     * @dataProvider dataRoutingProvider
+     */
+    public function testDisplayTodayAsDefault($type)
+    {
+        $current = new \DateTime();
+        $crawler = $this->client->request('GET', $this->app->url('admin_sales_report'.$type));
+        $this->assertTrue($this->client->getResponse()->isSuccessful());
+        $this->assertContains($current->format('Y-m-d'), $crawler->html());
+    }
+
+    /**
      * data routing provider.
      *
      * @return array
@@ -45,17 +59,17 @@ class SaleReportControllerTest extends SaleReportCommon
     }
 
     /**
-     * test report monthly.
+     * test sale report all type.
      *
      * @param string $type
      * @param string $termType
-     * @param string $expected
      * @param array  $unit
+     * @param string $expected
      * @dataProvider dataReportProvider
      */
-    public function testReportByMonth($type, $termType, $expected, $unit = null)
+    public function testSaleReportAll($type, $termType, $unit, $expected)
     {
-        $this->createOrderByCustomer(1);
+        $this->createOrderByCustomer(10);
         $current = new \DateTime();
         $arrSearch = array(
             'term_type' => $termType,
@@ -68,11 +82,61 @@ class SaleReportControllerTest extends SaleReportCommon
         if ($termType == 'monthly') {
             $arrSearch['monthly'] = $current->format('Y-m-d');
         } else {
-            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
-            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
+            $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
         }
         $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
         $this->assertContains($expected, $crawler->html());
+
+        //test display csv download button
+        $this->assertContains('CSV ダウンロード', $crawler->html());
+    }
+
+    /**
+     * test product report sort by order money.
+     *
+     * @param string $type
+     * @param string $termType
+     * @dataProvider dataProductReportProvider
+     */
+    public function testProductReportSortByOrderMoney($type, $termType)
+    {
+        $orderMoney = array();
+        $i = 0;
+        $j = 0;
+        $flag = false;
+        $this->createOrderByCustomer(10);
+        $current = new \DateTime();
+        $arrSearch = array(
+            'term_type' => $termType,
+            '_token' => 'dummy',
+        );
+
+        if ($termType == 'monthly') {
+            $arrSearch['monthly'] = $current->format('Y-m-d');
+        } else {
+            $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
+        }
+        $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
+        $moneyElement = $crawler->filter('tr .hidden');
+        //get only total money. don't get product price
+        foreach ($moneyElement as $domElement) {
+            if ($i % 2 != 0) {
+                $orderMoney[$j] = $domElement->nodeValue;
+                ++$j;
+            }
+            ++$i;
+        }
+        //check array is order by desc or not
+        for ($i = 0; $i < (sizeof($orderMoney) - 1); ++$i) {
+            if ($orderMoney[$i] >= $orderMoney[$i + 1]) {
+                $flag = true;
+            } else {
+                $flag = false;
+            }
+        }
+        $this->assertTrue($flag);
     }
 
     /**
@@ -83,14 +147,6 @@ class SaleReportControllerTest extends SaleReportCommon
     public function dataReportProvider()
     {
         return array(
-            array('', 'monthly', 'byDay', '購入平均'),
-            array('', 'monthly', 'byMonth', '購入平均'),
-            array('', 'monthly', 'byWeekDay', '購入平均'),
-            array('', 'monthly', 'byHour', '購入平均'),
-            array('', 'term', 'byDay', '購入平均'),
-            array('', 'term', 'byMonth', '購入平均'),
-            array('', 'term', 'byWeekDay', '購入平均'),
-            array('', 'term', 'byHour', '購入平均'),
             array('_term', 'monthly', 'byDay', '購入平均'),
             array('_term', 'monthly', 'byMonth', '購入平均'),
             array('_term', 'monthly', 'byWeekDay', '購入平均'),
@@ -103,6 +159,19 @@ class SaleReportControllerTest extends SaleReportCommon
             array('_product', 'term', null, '商品名'),
             array('_age', 'monthly', null, '年齢'),
             array('_age', 'term', null, '年齢'),
+        );
+    }
+
+    /**
+     * product report data provider.
+     *
+     * @return array
+     */
+    public function dataProductReportProvider()
+    {
+        return array(
+            array('_product', 'monthly', '商品名'),
+            array('_product', 'term', '商品名'),
         );
     }
 }

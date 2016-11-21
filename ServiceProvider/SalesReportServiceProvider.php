@@ -16,7 +16,6 @@ use Plugin\SalesReport\Service\SalesReportService;
 use Plugin\SalesReport\Form\Type\SalesReportType;
 use Plugin\SalesReport\Utils\Version;
 use Symfony\Component\Translation\Translator;
-use Silex\Application;
 
 // include log functions (for 3.0.0 - 3.0.11)
 require_once __DIR__.'/../log.php';
@@ -65,7 +64,7 @@ class SalesReportServiceProvider implements ServiceProviderInterface
         }
 
         // メッセージ登録
-        $app['translator'] = $app->share($app->extend('translator', function (Translator $translator, Application $app) {
+        $app['translator'] = $app->share($app->extend('translator', function (Translator $translator, BaseApplication $app) {
             $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
             if (file_exists($file)) {
                 $translator->addResource('yaml', $file, $app['locale']);

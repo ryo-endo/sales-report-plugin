@@ -11,7 +11,6 @@
 namespace Plugin\SalesReport\Service;
 
 use Eccube\Application;
-use Faker\Provider\cs_CZ\DateTime;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\NoResultException;
 
@@ -31,12 +30,12 @@ class SalesReportService
     private $reportType;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     private $termStart;
 
     /**
-     * @var DateTime
+     * @var \DateTime
      */
     private $termEnd;
 
@@ -151,7 +150,7 @@ class SalesReportService
     /**
      * setTermStart.
      *
-     * @param DateTime $term
+     * @param \DateTime $term
      *
      * @return SalesReportService
      */
@@ -165,7 +164,7 @@ class SalesReportService
     /**
      * setTermEnd.
      *
-     * @param DateTime $term
+     * @param \DateTime $term
      *
      * @return SalesReportService
      */
@@ -365,20 +364,22 @@ class SalesReportService
             foreach ($OrderDetails as $OrderDetail) {
                 /* @var $OrderDetail \Eccube\Entity\OrderDetail */
                 $ProductClass = $OrderDetail->getProductClass();
-                $id = $ProductClass->getId();
-                if (!array_key_exists($id, $products)) {
-                    $products[$id] = array(
-                        'ProductClass' => $ProductClass,
-                        'total' => 0,
-                        'quantity' => 0,
-                        'price' => 0,
-                        'time' => 0,
-                    );
+                if ($ProductClass) {
+                    $id = $ProductClass->getId();
+                    if (!array_key_exists($id, $products)) {
+                        $products[$id] = array(
+                            'ProductClass' => $ProductClass,
+                            'total' => 0,
+                            'quantity' => 0,
+                            'price' => 0,
+                            'time' => 0,
+                        );
+                    }
+                    $products[$id]['quantity'] += $OrderDetail->getQuantity();
+                    $products[$id]['price'] = $OrderDetail->getPriceIncTax();
+                    $products[$id]['total'] = $OrderDetail->getPriceIncTax() * $OrderDetail->getQuantity();
+                    ++$products[$id]['time'];
                 }
-                $products[$id]['quantity'] += $OrderDetail->getQuantity();
-                $products[$id]['price'] = $OrderDetail->getPriceIncTax();
-                $products[$id]['total'] = $OrderDetail->getPriceIncTax() * $OrderDetail->getQuantity();
-                ++$products[$id]['time'];
             }
         }
         //sort by total money
