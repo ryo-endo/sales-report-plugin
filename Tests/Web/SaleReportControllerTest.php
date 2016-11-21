@@ -82,8 +82,8 @@ class SaleReportControllerTest extends SaleReportCommon
         if ($termType == 'monthly') {
             $arrSearch['monthly'] = $current->format('Y-m-d');
         } else {
-            $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
-            $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
+            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
         }
         $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
         $this->assertContains($expected, $crawler->html());
@@ -101,9 +101,9 @@ class SaleReportControllerTest extends SaleReportCommon
      */
     public function testProductReportSortByOrderMoney($type, $termType)
     {
-        $orderMoney = array();
         $i = 0;
         $j = 0;
+        $orderMoney = array();
         $flag = false;
         $this->createOrderByCustomer(10);
         $current = new \DateTime();
