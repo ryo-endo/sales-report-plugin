@@ -375,10 +375,14 @@ class SalesReportService
                     }
                     $products[$id]['quantity'] += $OrderDetail->getQuantity();
                     $products[$id]['price'] = $OrderDetail->getPriceIncTax();
-                    $products[$id]['total'] = $OrderDetail->getPriceIncTax() * $OrderDetail->getQuantity();
                     ++$products[$id]['time'];
                 }
             }
+        }
+        //set total
+        foreach ($products as $key => $product) {
+            $total = $product['quantity'] * $product['price'];
+            $products[$key]['total'] = $total;
         }
         //sort by total money
         $products = $this->sortBy('total', $products);
