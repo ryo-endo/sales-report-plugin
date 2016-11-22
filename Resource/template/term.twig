@@ -19,6 +19,8 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
         window.onload = function() {
             //create line chart
             if(graphData != null) {
+                var dataSet = graphData.datasets;
+                graphData.datasets = [dataSet];
                 var config = {
                     type: 'line',
                     data: graphData,

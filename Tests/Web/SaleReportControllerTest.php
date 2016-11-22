@@ -69,7 +69,7 @@ class SaleReportControllerTest extends SaleReportCommon
      */
     public function testSaleReportAll($type, $termType, $unit, $expected)
     {
-        $this->createOrderByCustomer(10);
+        $this->createOrderByCustomer(15);
         $current = new \DateTime();
         $arrSearch = array(
             'term_type' => $termType,
@@ -105,7 +105,7 @@ class SaleReportControllerTest extends SaleReportCommon
         $j = 0;
         $orderMoney = array();
         $flag = false;
-        $this->createOrderByCustomer(10);
+        $this->createOrderByCustomer(15);
         $current = new \DateTime();
         $arrSearch = array(
             'term_type' => $termType,
@@ -115,8 +115,8 @@ class SaleReportControllerTest extends SaleReportCommon
         if ($termType == 'monthly') {
             $arrSearch['monthly'] = $current->format('Y-m-d');
         } else {
-            $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
-            $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
+            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
         }
         $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
         $moneyElement = $crawler->filter('tr .hidden');

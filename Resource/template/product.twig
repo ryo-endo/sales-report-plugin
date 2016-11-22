@@ -17,6 +17,8 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
     <script>
         var graphData = {{ graphData|raw }};
         window.onload = function() {
+            var dataSet = graphData.datasets;
+            graphData.datasets = [dataSet];
             //create pie chart
             if (graphData != null) {
                 var config = {
