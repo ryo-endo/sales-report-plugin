@@ -398,7 +398,13 @@ class SalesReportService
                 }
                 $label[$i] = 'Other';
             } else {
-                $label[$i] = $product['ProductClass']->getProduct()->getName();
+                $label[$i] = $product['ProductClass']->getProduct()->getName().' ';
+                if ($product['ProductClass']->getClassCategory1()) {
+                    $label[$i] .= $product['ProductClass']->getClassCategory1()->getName().' ';
+                    if ($product['ProductClass']->getClassCategory2()) {
+                        $label[$i] .= $product['ProductClass']->getClassCategory2()->getName();
+                    }
+                }
                 $graphData[$i] = $total;
                 ++$i;
             }
