@@ -466,7 +466,9 @@ class SalesReportService
                 $i = $i % 10;
             }
         }
-
+        //sort by age ASC.
+        ksort($result);
+        ksort($raw);
         log_info('SalesReport Plugin : age report ', array('result count' => count($raw)));
         //return null and not display in screen
         if ($i == 0) {

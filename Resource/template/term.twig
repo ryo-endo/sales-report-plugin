@@ -25,7 +25,17 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                     type: 'line',
                     data: graphData,
                     options: {
-                        responsive: true
+                        responsive: true,
+                        tooltips: {
+                            callbacks: {
+                                label : function tooltipsRender(tooltipItem, graphData) {
+                                    var index = tooltipItem.index;
+                                    var tooltipData = graphData.datasets[0].data[index];
+                                    var tooltipLabel = graphData.labels[index];
+                                    return '購入合計 : ¥' + moneyFormat(tooltipData);
+                                }
+                            }
+                        }
                     }
                 };
                 var ctx = document.getElementById("chart").getContext("2d");

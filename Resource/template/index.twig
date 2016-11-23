@@ -60,6 +60,10 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
 
         });
 
+       function moneyFormat(money) {
+            return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
         jQuery.fn.tableToCSV = function() {
             var clean_text = function(text){
                 text = text.replace(/"/g, '""');
