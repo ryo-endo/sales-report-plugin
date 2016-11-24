@@ -60,7 +60,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
 
         });
 
-       function moneyFormat(money) {
+        function moneyFormat(money) {
             return money.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
 
@@ -79,7 +79,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                 $(this).find('tr').each(function(){
                     var data = [];
                     $(this).find('th').each(function(){
-                        var text = clean_text($(this).text());
+                        var text = $(this).text();
                         title.push(text);
                     });
                     $(this).find('td').each(function(){
@@ -88,8 +88,12 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                         if(!td.hasClass('price-format')) {
                             if(td.hasClass('hidden')) {
                                 text = text.trim();
+                                if (text != '-') {
+                                    text = Math.round(text);
+                                } else {
+                                    text = 0;
+                                }
                             }
-                            text = clean_text(text);
                             data.push(text);
                         }
                     });
