@@ -140,6 +140,81 @@ class SaleReportControllerTest extends SaleReportCommon
     }
 
     /**
+     * test product delete.
+     *
+     * @param string $type
+     * @param string $termType
+     * @param array  $unit
+     * @param string $expected
+     * @dataProvider dataReportProvider
+     */
+    public function testProductDelete($type, $termType, $unit, $expected)
+    {
+        $current = new \DateTime();
+        $arrOrder = $this->createOrderByCustomer(15);
+        $this->deleteProduct($arrOrder[0]);
+        $arrSearch = array(
+            'term_type' => $termType,
+            '_token' => 'dummy',
+        );
+
+        if ($type == '' || $type == '_term') {
+            $arrSearch['unit'] = $unit;
+        }
+
+        if ($termType == 'monthly') {
+            $arrSearch['monthly'] = $current->format('Y-m-d');
+        } else {
+            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
+        }
+        $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
+        $this->assertContains($expected, $crawler->html());
+    }
+
+    /**
+     * test change order detail.
+     *
+     * @param string $type
+     * @param string $termType
+     * @dataProvider dataProductReportProvider
+     */
+    public function testChangeOrderDetail($type, $termType)
+    {
+        $i = 0;
+        $orderMoney = 0;
+        $current = new \DateTime();
+        $arrOrder = $this->createOrderByCustomer(15);
+        $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule();
+        $this->changeOrderDetail($arrOrder);
+        $arrSearch = array(
+            'term_type' => $termType,
+            '_token' => 'dummy',
+        );
+
+        if ($termType == 'monthly') {
+            $arrSearch['monthly'] = $current->format('Y-m-d');
+        } else {
+            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
+        }
+        $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
+        $moneyElement = $crawler->filter('tr .hidden');
+        //get only total money. don't get product price
+        foreach ($moneyElement as $domElement) {
+            if ($i % 2 != 0) {
+                $orderMoney += $domElement->nodeValue;
+            }
+            ++$i;
+        }
+
+        $tax = $TaxRule->getTaxRate() / 100;
+        $this->expected = 500 * 15 * (1 + $tax);
+        $this->actual = $orderMoney;
+        $this->verify();
+    }
+
+    /**
      * data report provider.
      *
      * @return array
