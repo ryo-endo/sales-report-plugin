@@ -24,7 +24,7 @@ class SaleReportControllerTest extends SaleReportCommon
      */
     public function testRouting($type, $expected)
     {
-        $crawler = $this->client->request('GET', $this->app->url('admin_sales_report'.$type));
+        $crawler = $this->client->request('GET', $this->app->url('admin_plugin_sales_report'.$type));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $this->assertContains($expected, $crawler->html());
     }
@@ -38,7 +38,7 @@ class SaleReportControllerTest extends SaleReportCommon
     public function testDisplayTodayAsDefault($type)
     {
         $current = new \DateTime();
-        $crawler = $this->client->request('GET', $this->app->url('admin_sales_report'.$type));
+        $crawler = $this->client->request('GET', $this->app->url('admin_plugin_sales_report'.$type));
         $this->assertTrue($this->client->getResponse()->isSuccessful());
         $this->assertContains($current->format('Y-m-d'), $crawler->html());
     }
@@ -85,7 +85,7 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
         }
-        $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
+        $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $this->assertContains($expected, $crawler->html());
 
         //test display csv download button
@@ -118,7 +118,7 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
         }
-        $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
+        $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $moneyElement = $crawler->filter('tr .hidden');
         //get only total money. don't get product price
         foreach ($moneyElement as $domElement) {
@@ -168,7 +168,7 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
         }
-        $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
+        $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $this->assertContains($expected, $crawler->html());
     }
 
@@ -198,7 +198,7 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
         }
-        $crawler = $this->client->request('POST', $this->app->url('admin_sales_report'.$type), array('sales_report' => $arrSearch));
+        $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $moneyElement = $crawler->filter('tr .hidden');
         //get only total money. don't get product price
         foreach ($moneyElement as $domElement) {
