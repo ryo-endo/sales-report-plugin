@@ -62,27 +62,27 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
         </div>
         <div class="col-md-12">
             <div class="box">
-                <div class="box-body no-header no-padding">
-                    <div class="table-responsive">
+                <div class="table_list">
+                    <div class="table-responsive with-border">
                         <table class="table table-striped" id="age-table">
                             <thead>
                             <tr>
-                                <th>年齢</th>
-                                <th>購入件数</th>
-                                <th>購入合計</th>
-                                <th>購入平均</th>
+                                <th>年代</th>
+                                <th>購入件数(件)</th>
+                                <th>購入合計(円)</th>
+                                <th>購入平均(円)</th>
                             </tr>
                             </thead>
                             <tbody>
                             {% for age, row in rawData %}
                                 <tr>
                                     <td>{{ age }}</td>
-                                    <td>{{ row.time|number_format }}</td>
-                                    <td class="price-format">
+                                    <td class="text-right">{{ row.time|number_format }}</td>
+                                    <td class="price-format text-right">
                                         {{ row.total|price }}
                                         <span class="hidden">{{ row.total }}</span>
                                     </td>
-                                    <td class="price-format">
+                                    <td class="price-format text-right">
                                         {% if row.time > 0 %}
                                             {{ (row.total / row.time)|round(2, 'floor')|price }}
                                         {% else %}
@@ -105,5 +105,15 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
             </div><!-- /.box -->
         </div><!-- /.col -->
     </div>
+    {% elseif rawData is null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-header with-arrow">
+                        <h3 class="box-title">集計期間にデータがありませんでした。</h3>
+                    </div><!-- /.box-header -->
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}

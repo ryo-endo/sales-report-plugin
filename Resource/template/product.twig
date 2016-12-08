@@ -59,17 +59,17 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
             </div>
             <div class="col-md-12">
                 <div class="box">
-                    <div class="box-body no-header no-padding">
-                        <div class="table-responsive">
+                    <div class="table_list">
+                        <div class="table-responsive with-border">
                             <table class="table table-striped" id="product-table">
                                 <thead>
                                 <tr>
                                     <th>商品コード</th>
                                     <th>商品名</th>
-                                    <th>購入件数</th>
-                                    <th>数量</th>
-                                    <th>単価</th>
-                                    <th>金額</th>
+                                    <th>購入件数(件)</th>
+                                    <th>数量(個)</th>
+                                    <th>単価(円)</th>
+                                    <th>金額(円)</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -85,13 +85,13 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                         {% else %}
                                             <td>{{ row.ProductClass.Product.name }}</td>
                                         {% endif %}
-                                        <td>{{ row.time|number_format }}</td>
-                                        <td>{{ row.quantity|number_format }}</td>
-                                        <td class="price-format">
+                                        <td class="text-right">{{ row.time|number_format }}</td>
+                                        <td class="text-right">{{ row.quantity|number_format }}</td>
+                                        <td class="price-format text-right">
                                             {{ row.price|price }}
                                             <span class="hidden">{{ row.price|raw }}</span>
                                         </td>
-                                        <td class="price-format">
+                                        <td class="price-format text-right">
                                             {{ row.total|price }}
                                             <span class="hidden">{{ row.total|raw }}</span>
                                         </td>
@@ -103,6 +103,16 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                     </div><!-- /.box-body -->
                 </div><!-- /.box -->
             </div><!-- /.col -->
+        </div>
+    {% elseif rawData is null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-header with-arrow">
+                        <h3 class="box-title">集計期間にデータがありませんでした。</h3>
+                    </div><!-- /.box-header -->
+                </div>
+            </div>
         </div>
     {% endif %}
 {% endblock %}
