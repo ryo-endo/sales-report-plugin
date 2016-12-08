@@ -65,7 +65,7 @@ class SalesReportType extends AbstractType
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
                 'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-                'data' => new \DateTime(),
+                'data' => new \DateTime('first day of this month'),
             ))
             ->add('term_end', 'date', array(
                 'label' => '期間集計(TO)',

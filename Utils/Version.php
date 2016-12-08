@@ -19,18 +19,9 @@ use Eccube\Common\Constant;
 class Version
 {
     /**
-     * Check version to support get instance function. (monolog, new style, ...).
-     *
-     * @return bool|int|mixed|void
-     */
-    public static function isSupportGetInstanceFunction()
-    {
-        return version_compare(Constant::VERSION, '3.0.9', '>=');
-    }
-    /**
      * Check version to support new log function.
      *
-     * @return bool|int|mixed|void
+     * @return bool
      */
     public static function isSupportLogFunction()
     {
