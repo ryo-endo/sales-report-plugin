@@ -333,6 +333,7 @@ class SalesReportService
                 'pointRadius' => 1,
                 'pointHitRadius' => 10,
                 'spanGaps' => false,
+                'borderWidth' => 1,
             ),
         );
 
@@ -415,6 +416,7 @@ class SalesReportService
             'datasets' => array(
                 'data' => $graphData,
                 'backgroundColor' => $backgroundColor,
+                'borderWidth' => 0,
             ),
         );
 
@@ -490,7 +492,7 @@ class SalesReportService
                 'label' => '購入合計',
                 'backgroundColor' => $backgroundColor,
                 'borderColor' => $backgroundColor,
-                'borderWidth' => 1,
+                'borderWidth' => 0,
                 'data' => array_values($result),
             ),
         );
