@@ -98,11 +98,11 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                             <td class="text-right">{{ row.time|number_format }}</td>
                                             <td class="text-right">{{ row.quantity|number_format }}</td>
                                             <td class="price-format text-right">
-                                                {{ row.price|price }}
+                                                {{ row.price|number_format }}
                                                 <span class="hidden">{{ row.price|raw }}</span>
                                             </td>
                                             <td class="price-format text-right">
-                                                {{ row.total|price }}
+                                                {{ row.total|number_format }}
                                                 <span class="hidden">{{ row.total|raw }}</span>
                                             </td>
                                         </tr>
