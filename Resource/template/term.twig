@@ -60,65 +60,67 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
 {% endblock %}
 
 {% block table %}
-    {% if app.request.method == 'POST' and rawData is not null %}
-    <div class="row">
-        <div class="flR" style="margin: 10px 20px 10px 0;">
-            <a id="export-csv" class="btn btn-default" data-export="export">CSV ダウンロード</a>
-        </div>
-        <div class="col-md-12">
-            <div class="box">
-                <div class="table_list">
-                    <div class="table-responsive with-border">
-                        <table class="table table-striped" id="term-table">
-                            <thead>
-                                <tr>
-                                    <th>期間</th>
-                                    <th>購入件数</th>
-                                    <th>購入合計(円)</th>
-                                    <th>購入平均(円)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for date, row in rawData %}
-                                    <tr>
-                                        <td>{{ date }}</td>
-                                        <td class="text-right">{{ row.time|number_format }}</td>
-                                        <td class="price-format text-right">
-                                            {{ row.price|price }}
-                                            <span class="hidden">{{ row.price }}</span>
-                                        </td>
-                                        <td class="price-format text-right">
-                                            {% if row.time > 0 %}
-                                                {{ (row.price / row.time)|round(2, 'floor')|price }}
-                                            {% else %}
-                                                -
-                                            {% endif %}
-                                            <span class="hidden">
-                                                {% if row.time > 0 %}
-                                                    {{ (row.price / row.time)|round(2, 'floor') }}
-                                                {% else %}
-                                                    -
-                                                {% endif %}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+    {% if app.request.method == 'POST' %}
+        {% if rawData is not null %}
+            <div class="row">
+                <div class="flR" style="margin: 10px 20px 10px 0;">
+                    <a id="export-csv" class="btn btn-default" data-export="export">CSV ダウンロード</a>
+                </div>
+                <div class="col-md-12">
+                    <div class="box">
+                        <div class="table_list">
+                            <div class="table-responsive with-border">
+                                <table class="table table-striped" id="term-table">
+                                    <thead>
+                                        <tr>
+                                            <th>期間</th>
+                                            <th>購入件数</th>
+                                            <th>購入合計(円)</th>
+                                            <th>購入平均(円)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for date, row in rawData %}
+                                            <tr>
+                                                <td>{{ date }}</td>
+                                                <td class="text-right">{{ row.time|number_format }}</td>
+                                                <td class="price-format text-right">
+                                                    {{ row.price|price }}
+                                                    <span class="hidden">{{ row.price }}</span>
+                                                </td>
+                                                <td class="price-format text-right">
+                                                    {% if row.time > 0 %}
+                                                        {{ (row.price / row.time)|round(2, 'floor')|price }}
+                                                    {% else %}
+                                                        -
+                                                    {% endif %}
+                                                    <span class="hidden">
+                                                        {% if row.time > 0 %}
+                                                            {{ (row.price / row.time)|round(2, 'floor') }}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div><!-- /.box -->
+                </div><!-- /.col -->
+            </div>
+        {% else %}
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="box">
+                        <div class="box-header with-arrow">
+                            <h3 class="box-title">集計期間にデータがありませんでした。</h3>
+                        </div><!-- /.box-header -->
                     </div>
                 </div>
-            </div><!-- /.box -->
-        </div><!-- /.col -->
-    </div>
-    {% elseif rawData is null %}
-        <div class="row">
-            <div class="col-md-12">
-                <div class="box">
-                    <div class="box-header with-arrow">
-                        <h3 class="box-title">集計期間にデータがありませんでした。</h3>
-                    </div><!-- /.box-header -->
-                </div>
             </div>
-        </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
