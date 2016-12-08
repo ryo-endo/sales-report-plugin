@@ -59,7 +59,7 @@ class SalesReportType extends AbstractType
                 'data' => new \DateTime(),
             ))
             ->add('term_start', 'date', array(
-                'label' => '期間集計(FROM)',
+                'label' => '期間集計',
                 'required' => false,
                 'input' => 'datetime',
                 'widget' => 'single_text',
@@ -68,7 +68,7 @@ class SalesReportType extends AbstractType
                 'data' => new \DateTime('first day of this month'),
             ))
             ->add('term_end', 'date', array(
-                'label' => '期間集計(TO)',
+                'label' => '期間集計',
                 'required' => false,
                 'input' => 'datetime',
                 'widget' => 'single_text',
@@ -88,6 +88,7 @@ class SalesReportType extends AbstractType
                     'byWeekDay' => '曜日別',
                     'byHour' => '時間別',
                 ),
+                'data' => 'byDay',
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
