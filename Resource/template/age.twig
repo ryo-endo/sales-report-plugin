@@ -78,14 +78,9 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                 <tr>
                                     <td>{{ age }}</td>
                                     <td>{{ row.time|number_format }}</td>
-                                    <td class="hidden">{{ row.total }}</td>
-                                    <td class="price-format">{{ row.total|price }}</td>
-                                    <td class="hidden">
-                                        {% if row.time > 0 %}
-                                            {{ (row.total / row.time)|round(2, 'floor') }}
-                                        {% else %}
-                                            -
-                                        {% endif %}
+                                    <td class="price-format">
+                                        {{ row.total|price }}
+                                        <span class="hidden">{{ row.total }}</span>
                                     </td>
                                     <td class="price-format">
                                         {% if row.time > 0 %}
@@ -93,6 +88,13 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                         {% else %}
                                             -
                                         {% endif %}
+                                        <span class="hidden">
+                                            {% if row.time > 0 %}
+                                                {{ (row.total / row.time)|round(2, 'floor') }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </span>
                                     </td>
                                 </tr>
                             {% endfor %}

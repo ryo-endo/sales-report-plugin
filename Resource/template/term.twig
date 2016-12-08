@@ -83,21 +83,23 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                     <tr>
                                         <td>{{ date }}</td>
                                         <td class="text-right">{{ row.time|number_format }}</td>
-                                        <td class="price-format text-right">{{ row.price|price }}</td>
-                                        <td class="hidden">{{ row.price }}</td>
+                                        <td class="price-format text-right">
+                                            {{ row.price|price }}
+                                            <span class="hidden">{{ row.price }}</span>
+                                        </td>
                                         <td class="price-format text-right">
                                             {% if row.time > 0 %}
                                                 {{ (row.price / row.time)|round(2, 'floor')|price }}
                                             {% else %}
                                                 -
                                             {% endif %}
-                                        </td>
-                                        <td class="hidden">
-                                            {% if row.time > 0 %}
-                                                {{ (row.price / row.time)|round(2, 'floor') }}
-                                            {% else %}
-                                                -
-                                            {% endif %}
+                                            <span class="hidden">
+                                                {% if row.time > 0 %}
+                                                    {{ (row.price / row.time)|round(2, 'floor') }}
+                                                {% else %}
+                                                    -
+                                                {% endif %}
+                                            </span>
                                         </td>
                                     </tr>
                                 {% endfor %}

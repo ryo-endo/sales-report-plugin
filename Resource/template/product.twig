@@ -87,10 +87,14 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                         {% endif %}
                                         <td>{{ row.time|number_format }}</td>
                                         <td>{{ row.quantity|number_format }}</td>
-                                        <td class="price-format">{{ row.price|price }}</td>
-                                        <td class="hidden">{{ row.price|raw }}</td>
-                                        <td class="price-format">{{ row.total|price }}</td>
-                                        <td class="hidden">{{ row.total|raw }}</td>
+                                        <td class="price-format">
+                                            {{ row.price|price }}
+                                            <span class="hidden">{{ row.price|raw }}</span>
+                                        </td>
+                                        <td class="price-format">
+                                            {{ row.total|price }}
+                                            <span class="hidden">{{ row.total|raw }}</span>
+                                        </td>
                                     </tr>
                                 {% endfor %}
                                 </tbody>

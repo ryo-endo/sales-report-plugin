@@ -84,15 +84,17 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                     $(this).find('td').each(function(){
                         var td = $(this);
                         var text = td.text();
-                        if(!td.hasClass('price-format')) {
-                            if(td.hasClass('hidden')) {
-                                text = text.trim();
+                        if(td.hasClass('price-format')) {
+                            td.find('span').each(function() {
+                                text = $(this).text().trim();
                                 if (text != '-') {
                                     text = Math.round(text);
                                 } else {
                                     text = 0;
                                 }
-                            }
+                                data.push(text);
+                            });
+                        } else {
                             data.push(text);
                         }
                     });
