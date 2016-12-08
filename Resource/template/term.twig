@@ -63,9 +63,11 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
     {% if app.request.method == 'POST' %}
         {% if rawData is not null %}
             <div class="row">
-                <div class="flR" style="margin: 10px 20px 10px 0;">
-                    <a id="export-csv" class="btn btn-default" data-export="export">CSV ダウンロード</a>
+                <div class="box-header">
+                    <a id="export-csv" class="btn btn-default pull-right" data-export="export">CSVダウンロード</a>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col-md-12">
                     <div class="box">
                         <div class="table_list">
