@@ -67,25 +67,25 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
         </div>
         <div class="col-md-12">
             <div class="box">
-                <div class="box-body no-header no-padding">
-                    <div class="table-responsive">
+                <div class="table_list">
+                    <div class="table-responsive with-border">
                         <table class="table table-striped" id="term-table">
                             <thead>
                                 <tr>
                                     <th>期間</th>
                                     <th>購入件数</th>
-                                    <th>購入合計</th>
-                                    <th>購入平均</th>
+                                    <th>購入合計(円)</th>
+                                    <th>購入平均(円)</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for date, row in rawData %}
                                     <tr>
                                         <td>{{ date }}</td>
-                                        <td>{{ row.time|number_format }}</td>
-                                        <td class="price-format">{{ row.price|price }}</td>
+                                        <td class="text-right">{{ row.time|number_format }}</td>
+                                        <td class="price-format text-right">{{ row.price|price }}</td>
                                         <td class="hidden">{{ row.price }}</td>
-                                        <td class="price-format">
+                                        <td class="price-format text-right">
                                             {% if row.time > 0 %}
                                                 {{ (row.price / row.time)|round(2, 'floor')|price }}
                                             {% else %}
@@ -104,7 +104,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                             </tbody>
                         </table>
                     </div>
-                </div><!-- /.box-body -->
+                </div>
             </div><!-- /.box -->
         </div><!-- /.col -->
     </div>
