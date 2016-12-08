@@ -146,9 +146,6 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
-
-                        {% block option %}{% endblock %}
-
                         <div class="form-group">
                             {{ form_label(form.monthly) }}
                             <div class="col-sm-9 col-lg-10 form-inline">
@@ -166,6 +163,9 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                 <a id="btn-term" class="btn btn-default">期間で集計</a>
                             </div>
                         </div>
+
+                        {% block option %}{% endblock %}
+
                     </div>
                     <!-- /.box-body -->
                 </div>
