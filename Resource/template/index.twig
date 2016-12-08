@@ -171,6 +171,8 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
             </div>
             <!-- /.col -->
         </div>
+
+        {% if app.request.method == 'POST' and rawData is not null %}
         <div class="row">
             <div class="col-md-12">
                 <div style="width: 65%;margin-left: 15%;">
@@ -178,6 +180,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                 </div>
             </div>
         </div>
+        {% endif %}
 
         {% block table %}{% endblock %}
 

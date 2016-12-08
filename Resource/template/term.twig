@@ -108,5 +108,15 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
             </div><!-- /.box -->
         </div><!-- /.col -->
     </div>
+    {% elseif rawData is null %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-header with-arrow">
+                        <h3 class="box-title">検索条件に該当するデータがありませんでした。</h3>
+                    </div><!-- /.box-header -->
+                </div>
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
