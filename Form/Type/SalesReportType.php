@@ -88,6 +88,7 @@ class SalesReportType extends AbstractType
                     'byWeekDay' => '曜日別',
                     'byHour' => '時間別',
                 ),
+                'data' => 'byDay',
                 'constraints' => array(
                     new Assert\NotBlank(),
                 ),
