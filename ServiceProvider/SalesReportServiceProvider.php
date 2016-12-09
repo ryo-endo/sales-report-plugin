@@ -60,7 +60,7 @@ class SalesReportServiceProvider implements ServiceProviderInterface
         }));
 
         // Serviceの定義
-        $app['eccube.plugin.service.sales_report'] = $app->share(function () use ($app) {
+        $app['salesreport.service.sales_report'] = $app->share(function () use ($app) {
             return new SalesReportService($app);
         });
 
@@ -71,7 +71,9 @@ class SalesReportServiceProvider implements ServiceProviderInterface
 
         // メッセージ登録
         $file = __DIR__.'/../Resource/locale/message.'.$app['locale'].'.yml';
-        $app['translator']->addResource('yaml', $file, $app['locale']);
+        if (file_exists($file)) {
+            $app['translator']->addResource('yaml', $file, $app['locale']);
+        }
 
         // サブナビの拡張
         $app['config'] = $app->share($app->extend('config', function ($config) {

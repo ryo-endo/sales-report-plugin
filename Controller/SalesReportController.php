@@ -96,7 +96,7 @@ class SalesReportController
         );
 
         if (!is_null($reportType) && $form->isValid()) {
-            $data = $app['eccube.plugin.service.sales_report']
+            $data = $app['salesreport.service.sales_report']
                 ->setReportType($reportType)
                 ->setTerm($form->get('term_type')->getData(), $form->getData())
                 ->getData();
