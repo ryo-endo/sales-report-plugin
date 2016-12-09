@@ -10,6 +10,7 @@
 
 namespace Plugin\SalesReport\Service;
 
+use DateTime;
 use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\NoResultException;
@@ -78,18 +79,22 @@ class SalesReportService
      */
     public function setTerm($termType, $request)
     {
-        // termStart <= X < termEnd となるように整形する
         if ($termType === 'monthly') {
-            $date = $request['monthly'];
-            $start = $date->format('Y-m-01 00:00:00');
-            $end = $date
-                ->modify('+ 1 month')
-                ->format('Y-m-01 00:00:00');
+            // 月度集計
+            $year = $request['monthly_year'];
+            $month = $request['monthly_month'];
+
+            $date = new DateTime();
+            $date->setDate($year, $month, 1)->setTime(0, 0, 0);
+
+            $start = $date->format('Y-m-d G:i:s');
+            $end = $date->modify('+ 1 month')->format('Y-m-d G:i:s');
 
             $this
                 ->setTermStart($start)
                 ->setTermEnd($end);
         } else {
+            // 期間集計
             $start = $request['term_start']
                 ->format('Y-m-d 00:00:00');
             $end = $request['term_end']
@@ -100,7 +105,7 @@ class SalesReportService
             $this->setTermEnd($end);
         }
 
-        // 集計単位をせってい
+        // 集計単位を設定
         if (isset($request['unit'])) {
             $this->unit = $request['unit'];
         }
