@@ -38,6 +38,15 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                         },
                         legend: {
                             display: false
+                        },
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    callback: function(value){
+                                        return new Intl.NumberFormat().format(value);
+                                    }
+                                }
+                            }]
                         }
                     }
                 };

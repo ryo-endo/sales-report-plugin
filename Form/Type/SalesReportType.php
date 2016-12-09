@@ -45,22 +45,29 @@ class SalesReportType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        // 年月の配列定義
+        $yearList = range(date('Y') - 20, date('Y') + 20); // 今年±20年
+        $monthList = range(1, 12); // 1～12月
+
         $builder
             ->add('term_type', 'hidden', array(
                 'required' => false,
             ))
-            ->add('monthly', 'date', array(
-                'label' => '月度集計',
-                'required' => false,
-                'input' => 'datetime',
-                'widget' => 'single_text',
-                'format' => 'yyyy-MM-dd',
-                'empty_value' => array('year' => '----', 'month' => '--', 'day' => '--'),
-                'data' => new \DateTime(),
+            ->add('monthly_year', 'choice', array(
+                'label' => '年',
+                'required' => true,
+                'choices' => array_combine($yearList,$yearList),
+                'data' => date('Y'),
+            ))
+            ->add('monthly_month', 'choice', array(
+                'label' => '月',
+                'required' => true,
+                'choices' => array_combine($monthList,$monthList),
+                'data' => date('n'),
             ))
             ->add('term_start', 'date', array(
                 'label' => '期間集計',
-                'required' => false,
+                'required' => true,
                 'input' => 'datetime',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
@@ -69,7 +76,7 @@ class SalesReportType extends AbstractType
             ))
             ->add('term_end', 'date', array(
                 'label' => '期間集計',
-                'required' => false,
+                'required' => true,
                 'input' => 'datetime',
                 'widget' => 'single_text',
                 'format' => 'yyyy-MM-dd',
@@ -78,7 +85,7 @@ class SalesReportType extends AbstractType
             ))
             ->add('unit', 'choice', array(
                 'label' => '集計単位',
-                'required' => false,
+                'required' => true,
                 'expanded' => true,
                 'multiple' => false,
                 'empty_value' => false,
@@ -96,8 +103,17 @@ class SalesReportType extends AbstractType
             ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
                 $form = $event->getForm();
                 $data = $form->getData();
-                if ($data['term_type'] === 'monthly' && empty($data['monthly'])) {
-                    $form['monthly']->addError(new FormError($this->app->trans('plugin.sales_report.type.monthly.error')));
+                if ($data['term_type'] === 'monthly') {
+                    if (empty($data['monthly_year'])) {
+                        $form['monthly_year']->addError(
+                            new FormError($this->app->trans('plugin.sales_report.type.monthly.error'))
+                        );
+                    }
+                    if (empty($data['monthly_month'])) {
+                        $form['monthly_month']->addError(
+                            new FormError($this->app->trans('plugin.sales_report.type.monthly.error'))
+                        );
+                    }
                 } elseif ($data['term_type'] === 'term' && (empty($data['term_start']) || empty($data['term_end']))) {
                     $form['term_start']->addError(new FormError($this->app->trans('plugin.sales_report.type.term_start.error')));
                 }

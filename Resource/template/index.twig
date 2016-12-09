@@ -147,10 +147,10 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                     <!-- /.box-header -->
                     <div class="box-body">
                         <div class="form-group">
-                            {{ form_label(form.monthly) }}
+                            <label class="col-sm-2 control-label">月度集計</label>
                             <div class="col-sm-9 col-lg-10 form-inline">
-                                {{ form_widget(form.monthly, {'attr': {'placeholder': '年-月-日'}}) }}
-                                {{ form_errors(form.monthly) }}
+                                {{ form_widget(form.monthly_year) }} 年 {{ form_widget(form.monthly_month) }} 月
+                                {{ form_errors(form.monthly_year) }}{{ form_errors(form.monthly_month) }}
                                 <a id="btn-monthly" class="btn btn-default">月度で集計</a>
                             </div>
                         </div>
