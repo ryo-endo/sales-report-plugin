@@ -256,17 +256,17 @@ class SalesReportService
     private function getColor($index)
     {
         $map = array(
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#5319e7',
-            '#d93f0b',
-            '#55a532',
-            '#1d76db',
-            '#bfd4f2',
-            '#cc317c',
-            '#006b75',
-            '#444',
+            '#F2594B',
+            '#D17A45',
+            '#FFAB48',
+            '#FFE7AD',
+            '#FFD393',
+            '#9C9B7A',
+            '#A7C9AE',
+            '#63A69F',
+            '#3F5765',
+            '#685C79',
+            '#979C9C',
         );
 
         return $map[$index];
