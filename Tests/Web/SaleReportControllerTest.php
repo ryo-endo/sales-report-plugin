@@ -80,7 +80,8 @@ class SaleReportControllerTest extends SaleReportCommon
         }
 
         if ($termType == 'monthly') {
-            $arrSearch['monthly'] = $current->format('Y-m-d');
+            $arrSearch['monthly_year'] = $current->format('Y');
+            $arrSearch['monthly_month'] = $current->format('m');
         } else {
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
@@ -89,7 +90,7 @@ class SaleReportControllerTest extends SaleReportCommon
         $this->assertContains($expected, $crawler->html());
 
         //test display csv download button
-        $this->assertContains('CSV ダウンロード', $crawler->html());
+        $this->assertContains('CSVダウンロード', $crawler->html());
     }
 
     /**
@@ -113,7 +114,8 @@ class SaleReportControllerTest extends SaleReportCommon
         );
 
         if ($termType == 'monthly') {
-            $arrSearch['monthly'] = $current->format('Y-m-d');
+            $arrSearch['monthly_year'] = $current->format('Y');
+            $arrSearch['monthly_month'] = $current->format('m');
         } else {
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
@@ -163,7 +165,8 @@ class SaleReportControllerTest extends SaleReportCommon
         }
 
         if ($termType == 'monthly') {
-            $arrSearch['monthly'] = $current->format('Y-m-d');
+            $arrSearch['monthly_year'] = $current->format('Y');
+            $arrSearch['monthly_month'] = $current->format('m');
         } else {
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
@@ -193,7 +196,8 @@ class SaleReportControllerTest extends SaleReportCommon
         );
 
         if ($termType == 'monthly') {
-            $arrSearch['monthly'] = $current->format('Y-m-d');
+            $arrSearch['monthly_year'] = $current->format('Y');
+            $arrSearch['monthly_month'] = $current->format('m');
         } else {
             $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
@@ -232,8 +236,8 @@ class SaleReportControllerTest extends SaleReportCommon
             array('_term', 'term', 'byHour', '購入平均'),
             array('_product', 'monthly', null, '商品名'),
             array('_product', 'term', null, '商品名'),
-            array('_age', 'monthly', null, '年齢'),
-            array('_age', 'term', null, '年齢'),
+            array('_age', 'monthly', null, '購入平均'),
+            array('_age', 'term', null, '購入平均'),
         );
     }
 

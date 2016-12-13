@@ -45,9 +45,10 @@ class SalesReportType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        // 年月の配列定義
-        $yearList = range(date('Y') - 20, date('Y') + 20); // 今年±20年
-        $monthList = range(1, 12); // 1～12月
+        // 年月の配列定義. 今年±20年
+        $yearList = range(date('Y') - 20, date('Y') + 20);
+        // 1～12月
+        $monthList = range(1, 12);
 
         $builder
             ->add('term_type', 'hidden', array(
