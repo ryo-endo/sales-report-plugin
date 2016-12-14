@@ -12,6 +12,7 @@ namespace Plugin\SalesReport\Service;
 
 use DateTime;
 use Eccube\Application;
+use Eccube\Util\EntityUtil;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\NoResultException;
 
@@ -44,6 +45,16 @@ class SalesReportService
      * @var string
      */
     private $unit;
+
+    /**
+     * @var int
+     */
+    const MALE = 1;
+
+    /**
+     * @var int
+     */
+    const FEMALE = 2;
 
     /**
      * SalesReportService constructor.
@@ -213,7 +224,7 @@ class SalesReportService
     private function formatUnit()
     {
         $unit = array(
-            'byDay' => 'm/d',
+            'byDay' => 'Y-m-d',
             'byMonth' => 'm',
             'byWeekDay' => 'D',
             'byHour' => 'H',
@@ -285,13 +296,19 @@ class SalesReportService
         $end = new \DateTime($this->termEnd);
         $raw = array();
         $price = array();
-        $i = 0;
+        $orderNumber = 0;
         $format = $this->formatUnit();
         for ($term = $start; $term < $end; $term = $term->modify('+ 1 Hour')) {
             $date = $term->format($format);
             $raw[$date] = array(
                 'price' => 0,
                 'time' => 0,
+                'male' => 0,
+                'female' => 0,
+                'member_male' => 0,
+                'nonmember_male' => 0,
+                'member_female' => 0,
+                'nonmember_female' => 0,
             );
             $price[$date] = 0;
         }
@@ -301,15 +318,33 @@ class SalesReportService
             $orderDate = $Order
                 ->getOrderDate()
                 ->format($format);
+
+
+
             $price[$orderDate] += $Order->getPaymentTotal();
             $raw[$orderDate]['price'] += $Order->getPaymentTotal();
             ++$raw[$orderDate]['time'];
-            ++$i;
+
+            $sex = $Order->getSex()->getId();
+            $raw[$orderDate]['male'] += ($sex == self::MALE);
+            $raw[$orderDate]['female'] += ($sex == self::FEMALE);
+
+            // When customers were deleted, that data will be counted in non-members.
+            $Customer = $Order->getCustomer();
+            if (EntityUtil::isNotEmpty($Customer)) {
+                $raw[$orderDate]['member_male'] += ($sex == self::MALE);
+                $raw[$orderDate]['member_female'] += ($sex == self::FEMALE);
+            } else {
+                $raw[$orderDate]['nonmember_male'] += ($sex == self::MALE);
+                $raw[$orderDate]['nonmember_female'] += ($sex == self::FEMALE);
+            }
+
+            ++$orderNumber;
         }
 
-        log_info('SalesReport Plugin : term report ', array('result count' => count($raw)));
+        log_info('SalesReport Plugin : term report ', array('result count' => $orderNumber));
         //return null and not display in screen
-        if ($i == 0) {
+        if ($orderNumber == 0) {
             return array(
                 'raw' => null,
                 'graph' => null,
