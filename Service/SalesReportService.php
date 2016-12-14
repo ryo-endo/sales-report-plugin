@@ -316,6 +316,8 @@ class SalesReportService
 
         /* @var $entityManager EntityManager */
         $entityManager = $this->app['orm.em'];
+        $sql = 'Select o.customer_id From dtb_order o Where o.order_id = :order_id';
+        $stmt = $entityManager->getConnection()->prepare($sql);
         foreach ($data as $Order) {
             /* @var $Order \Eccube\Entity\Order */
             $orderDate = $Order
@@ -335,11 +337,8 @@ class SalesReportService
             $raw[$orderDate]['female'] += ($sex == self::FEMALE);
 
             // Get customer id
-            $sql = 'Select o.customer_id From dtb_order o Where o.order_id = :order_id';
             $params['order_id'] = $Order->getId();
-            $stmt = $entityManager->getConnection()->prepare($sql);
             $stmt->execute($params);
-
             $customerId = $stmt->fetch(\PDO::FETCH_COLUMN);
             if ($customerId) {
                 $raw[$orderDate]['member_male'] += ($sex == self::MALE);
@@ -353,7 +352,7 @@ class SalesReportService
         }
 
         log_info('SalesReport Plugin : term report ', array('result count' => $orderNumber));
-        //return null and not display in screen
+        // Return null and not display in screen
         if ($orderNumber == 0) {
             return array(
                 'raw' => null,
@@ -407,26 +406,31 @@ class SalesReportService
         $graphData = array();
         $backgroundColor = array();
         $products = array();
+        /* @var $entityManager EntityManager */
+        $entityManager = $this->app['orm.em'];
+        $sql = 'Select od.product_class_id From dtb_order_detail od Where od.order_detail_id = :order_detail_id';
+        $stmt = $entityManager->getConnection()->prepare($sql);
         foreach ($data as $Order) {
             /* @var $Order \Eccube\Entity\Order */
             $OrderDetails = $Order->getOrderDetails();
             foreach ($OrderDetails as $OrderDetail) {
-                /* @var $OrderDetail \Eccube\Entity\OrderDetail */
-                $ProductClass = $OrderDetail->getProductClass();
-                if ($ProductClass) {
-                    $id = $ProductClass->getId();
-                    if (!array_key_exists($id, $products)) {
-                        $products[$id] = array(
-                            'ProductClass' => $ProductClass,
+                // Get product class id
+                $params['order_detail_id'] = $OrderDetail->getId();
+                $stmt->execute($params);
+                $productClassId = $stmt->fetch(\PDO::FETCH_COLUMN);
+                if ($productClassId) {
+                    if (!array_key_exists($productClassId, $products)) {
+                        $products[$productClassId] = array(
+                            'OrderDetail' => $OrderDetail,
                             'total' => 0,
                             'quantity' => 0,
                             'price' => 0,
                             'time' => 0,
                         );
                     }
-                    $products[$id]['quantity'] += $OrderDetail->getQuantity();
-                    $products[$id]['price'] = $OrderDetail->getPriceIncTax();
-                    ++$products[$id]['time'];
+                    $products[$productClassId]['quantity'] += $OrderDetail->getQuantity();
+                    $products[$productClassId]['price'] = $OrderDetail->getPriceIncTax();
+                    ++$products[$productClassId]['time'];
                 }
             }
         }
@@ -449,13 +453,9 @@ class SalesReportService
                 }
                 $label[$i] = 'Other';
             } else {
-                $label[$i] = $product['ProductClass']->getProduct()->getName().' ';
-                if ($product['ProductClass']->getClassCategory1()) {
-                    $label[$i] .= $product['ProductClass']->getClassCategory1()->getName().' ';
-                    if ($product['ProductClass']->getClassCategory2()) {
-                        $label[$i] .= $product['ProductClass']->getClassCategory2()->getName();
-                    }
-                }
+                $label[$i] = $product['OrderDetail']->getProductName().' ';
+                $label[$i] .= $product['OrderDetail']->getClassCategoryName1().' ';
+                $label[$i] .= $product['OrderDetail']->getClassCategoryName2();
                 $graphData[$i] = $total;
                 ++$i;
             }
@@ -524,11 +524,11 @@ class SalesReportService
                 $i = $i % 10;
             }
         }
-        //sort by age ASC.
+        // Sort by age ASC.
         ksort($result);
         ksort($raw);
         log_info('SalesReport Plugin : age report ', array('result count' => count($raw)));
-        //return null and not display in screen
+        // Return null and not display in screen
         if ($i == 0) {
             return array(
                 'raw' => null,

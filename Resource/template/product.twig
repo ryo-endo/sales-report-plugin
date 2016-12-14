@@ -85,16 +85,8 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                     <tbody>
                                     {% for row in rawData %}
                                         <tr>
-                                            <td>{{ row.ProductClass.code }}</td>
-                                            {% if row.ProductClass.ClassCategory1 is not null %}
-                                                {% if row.ProductClass.ClassCategory2 is not null %}
-                                                    <td>{{ row.ProductClass.Product.name }} {{ row.ProductClass.ClassCategory1.name }} {{ row.ProductClass.ClassCategory2.name }}</td>
-                                                {% else %}
-                                                    <td>{{ row.ProductClass.Product.name }} {{ row.ProductClass.ClassCategory1.name }}</td>
-                                                {% endif %}
-                                            {% else %}
-                                                <td>{{ row.ProductClass.Product.name }}</td>
-                                            {% endif %}
+                                            <td>{{ row.OrderDetail.product_code }}</td>
+                                            <td>{{ row.OrderDetail.product_name }} {{ row.OrderDetail.class_category_name1 }} {{ row.OrderDetail.class_category_name2 }}</td>
                                             <td class="text-right">{{ row.time|number_format }}</td>
                                             <td class="text-right">{{ row.quantity|number_format }}</td>
                                             <td class="price-format text-right">
