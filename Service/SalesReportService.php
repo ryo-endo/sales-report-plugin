@@ -11,6 +11,7 @@
 namespace Plugin\SalesReport\Service;
 
 use DateTime;
+use Doctrine\ORM\EntityManager;
 use Eccube\Application;
 use Eccube\Util\EntityUtil;
 use Symfony\Component\HttpFoundation\Request;
@@ -313,17 +314,18 @@ class SalesReportService
             $price[$date] = 0;
         }
 
+        /* @var $entityManager EntityManager */
+        $entityManager = $this->app['orm.em'];
         foreach ($data as $Order) {
             /* @var $Order \Eccube\Entity\Order */
             $orderDate = $Order
                 ->getOrderDate()
                 ->format($format);
-
-
-
             $price[$orderDate] += $Order->getPaymentTotal();
             $raw[$orderDate]['price'] += $Order->getPaymentTotal();
             ++$raw[$orderDate]['time'];
+
+            // Get sex
             $Sex = $Order->getSex();
             $sex = 0;
             if (EntityUtil::isNotEmpty($Sex)) {
@@ -332,9 +334,13 @@ class SalesReportService
             $raw[$orderDate]['male'] += ($sex == self::MALE);
             $raw[$orderDate]['female'] += ($sex == self::FEMALE);
 
-            // When customers were deleted, that data will be counted in non-members.
-            $Customer = $Order->getCustomer();
-            if (EntityUtil::isNotEmpty($Customer)) {
+            // Get customer id
+            $sql = 'Select o.customer_id From dtb_order o Where o.order_id = :order_id';
+            $params['order_id'] = $Order->getId();
+            $stmt = $entityManager->getConnection()->prepare($sql);
+            $stmt->execute($params);
+            $customer_id = $stmt->fetch(\PDO::FETCH_COLUMN);
+            if ($customer_id) {
                 $raw[$orderDate]['member_male'] += ($sex == self::MALE);
                 $raw[$orderDate]['member_female'] += ($sex == self::FEMALE);
             } else {
