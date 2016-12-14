@@ -82,12 +82,30 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                         <div class="table_list">
                             <div class="table-responsive with-border">
                                 <table class="table table-striped" id="term-table">
+                                    <colgroup>
+                                        <col />
+                                        <col width="8%"/>
+                                        <col width="8%"/>
+                                        <col width="8%"/>
+                                        <col width="8%"/>
+                                        <col width="8%"/>
+                                        <col width="8%"/>
+                                        <col width="8%"/>
+                                        <col />
+                                        <col />
+                                    </colgroup>
                                     <thead>
                                         <tr>
-                                            <th>期間</th>
-                                            <th>購入件数</th>
-                                            <th>購入合計(円)</th>
-                                            <th>購入平均(円)</th>
+                                            <th style="text-align: center">期間</th>
+                                            <th style="text-align: center">購入件数</th>
+                                            <th style="text-align: center">男性</th>
+                                            <th style="text-align: center">女性</th>
+                                            <th style="text-align: center">男性 (会員)</th>
+                                            <th style="text-align: center">男性 (非会員)</th>
+                                            <th style="text-align: center">女性 (会員)</th>
+                                            <th style="text-align: center">女性 (非会員)</th>
+                                            <th style="text-align: center">購入合計(円)</th>
+                                            <th style="text-align: center">購入平均(円)</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -95,6 +113,14 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                             <tr>
                                                 <td>{{ date }}</td>
                                                 <td class="text-right">{{ row.time|number_format }}</td>
+
+                                                <td class="text-right">{{ row.male|number_format }}</td>
+                                                <td class="text-right">{{ row.female|number_format }}</td>
+                                                <td class="text-right">{{ row.member_male|number_format }}</td>
+                                                <td class="text-right">{{ row.nonmember_male|number_format }}</td>
+                                                <td class="text-right">{{ row.member_female|number_format }}</td>
+                                                <td class="text-right">{{ row.nonmember_female|number_format }}</td>
+
                                                 <td class="price-format text-right">
                                                     {{ row.price|number_format }}
                                                     <span class="hidden">{{ row.price }}</span>

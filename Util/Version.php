@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace Plugin\SalesReport\Utils;
+namespace Plugin\SalesReport\Util;
 
 use Eccube\Common\Constant;
 
