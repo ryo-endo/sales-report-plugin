@@ -324,8 +324,11 @@ class SalesReportService
             $price[$orderDate] += $Order->getPaymentTotal();
             $raw[$orderDate]['price'] += $Order->getPaymentTotal();
             ++$raw[$orderDate]['time'];
-
-            $sex = $Order->getSex()->getId();
+            $Sex = $Order->getSex();
+            $sex = 0;
+            if (EntityUtil::isNotEmpty($Sex)) {
+                $sex = $Order->getSex()->getId();
+            }
             $raw[$orderDate]['male'] += ($sex == self::MALE);
             $raw[$orderDate]['female'] += ($sex == self::FEMALE);
 
