@@ -22,17 +22,17 @@ class SalesReportController
     /**
      * @var array
      */
-    private $productCsvHeader = ['商品コード', '商品名', '購入件数(件)', '数量(個)', '単価(円)', '金額(円)'];
+    private $productCsvHeader = array('商品コード', '商品名', '購入件数(件)', '数量(個)', '単価(円)', '金額(円)');
 
     /**
      * @var array
      */
-    private $termCsvHeader = ['期間', '購入件数', '男性', '女性', '男性 (会員)', '男性 (非会員)', '女性 (会員)', '女性 (非会員)	','購入合計(円)', '購入平均(円)'];
+    private $termCsvHeader = array('期間', '購入件数', '男性', '女性', '男性(会員)', '男性(非会員)', '女性(会員)', '女性(非会員)', '購入合計(円)', '購入平均(円)');
 
     /**
      * @var array
      */
-    private $ageCsvHeader = ['年代', '購入件数(件)', '購入合計(円)', '購入平均(円)'];
+    private $ageCsvHeader = array('年代', '購入件数(件)', '購入合計(円)', '購入平均(円)');
 
     /**
      * redirect by report type. default is term.
@@ -112,13 +112,14 @@ class SalesReportController
         );
 
         if (!is_null($reportType) && $form->isValid()) {
-            $data = $app['salesreport.service.sales_report']
-                ->setReportType($reportType)
-                ->setTerm($form->get('term_type')->getData(), $form->getData())
-                ->getData();
+            $session = $request->getSession();
             $searchData = $form->getData();
             $searchData['term_type'] = $form->get('term_type')->getData();
-            $request->getSession()->set('eccube.admin.plugin.sales_report.export', $searchData);
+            $session->set('eccube.admin.plugin.sales_report.export', $searchData);
+            $data = $app['salesreport.service.sales_report']
+                ->setReportType($reportType)
+                ->setTerm($form->get('term_type')->getData(), $searchData)
+                ->getData();
         }
 
         $template = is_null($reportType) ? 'term' : $reportType;
@@ -257,6 +258,7 @@ class SalesReportController
 
         // Query data from database
         if ($searchData) {
+            $searchData['term_end'] = $searchData['term_end']->modify('- 1 day');
             $data = $app['salesreport.service.sales_report']
                 ->setReportType($type)
                 ->setTerm($searchData['term_type'], $searchData)
