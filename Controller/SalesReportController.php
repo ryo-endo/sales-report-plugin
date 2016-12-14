@@ -87,6 +87,78 @@ class SalesReportController
     }
 
     /**
+     * 商品CSVの出力.
+     *
+     * @param Application $app
+     * @param Request     $request
+     * @param string      $type
+     *
+     * @return StreamedResponse
+     */
+    public function export(Application $app, Request $request, $type)
+    {
+        set_time_limit(0);
+        $response = new StreamedResponse();
+        $session = $request->getSession();
+        $filename = '';
+        if ($session->has('eccube.admin.plugin.sales_report.export')) {
+            $searchData = $session->get('eccube.admin.plugin.sales_report.export');
+        } else {
+            $searchData = array();
+        }
+
+        $data = array(
+            'graph' => null,
+            'raw' => null,
+        );
+
+        // Query data from database
+        if ($searchData) {
+            $searchData['term_end'] = $searchData['term_end']->modify('- 1 day');
+            $data = $app['salesreport.service.sales_report']
+                ->setReportType($type)
+                ->setTerm($searchData['term_type'], $searchData)
+                ->getData();
+        }
+
+        $response->setCallback(function () use ($data, $app, $request, $type) {
+            //export data by type
+            switch ($type) {
+                case 'term':
+                    $this->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    break;
+                case 'product':
+                    $this->exportProductCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    break;
+                case 'age':
+                    $this->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    break;
+            }
+        });
+
+        //set filename by type
+        $now = new \DateTime();
+        switch ($type) {
+            case 'term':
+                $filename = '期間別集計_'.$now->format('YmdHis').'.csv';
+                break;
+            case 'product':
+                $filename = '商品別集計_'.$now->format('YmdHis').'.csv';
+                break;
+            case 'age':
+                $filename = '年代別集計_'.$now->format('YmdHis').'.csv';
+                break;
+        }
+
+        $response->headers->set('Content-Type', 'application/octet-stream');
+        $response->headers->set('Content-Disposition', 'attachment; filename='.$filename);
+        $response->send();
+        log_info('商品CSV出力ファイル名', array($filename));
+
+        return $response;
+    }
+
+    /**
      * direct by report type(default term).
      *
      * @param Application $app
@@ -229,76 +301,5 @@ class SalesReportController
         } catch (\Exception $e) {
             log_info('CSV age export exception', array($e->getMessage()));
         }
-    }
-
-    /**
-     * 商品CSVの出力.
-     *
-     * @param Application $app
-     * @param Request     $request
-     * @param string      $type
-     * @return StreamedResponse
-     */
-    public function export(Application $app, Request $request, $type)
-    {
-        set_time_limit(0);
-        $response = new StreamedResponse();
-        $session = $request->getSession();
-        $filename = '';
-        if ($session->has('eccube.admin.plugin.sales_report.export')) {
-            $searchData = $session->get('eccube.admin.plugin.sales_report.export');
-        } else {
-            $searchData = array();
-        }
-
-        $data = array(
-            'graph' => null,
-            'raw' => null,
-        );
-
-        // Query data from database
-        if ($searchData) {
-            $searchData['term_end'] = $searchData['term_end']->modify('- 1 day');
-            $data = $app['salesreport.service.sales_report']
-                ->setReportType($type)
-                ->setTerm($searchData['term_type'], $searchData)
-                ->getData();
-        }
-
-        $response->setCallback(function () use ($data, $app, $request, $type) {
-            //export data by type
-            switch ($type) {
-                case 'term':
-                    $this->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
-                    break;
-                case 'product':
-                    $this->exportProductCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
-                    break;
-                case 'age':
-                    $this->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
-                    break;
-            }
-        });
-
-        //set filename by type
-        $now = new \DateTime();
-        switch ($type) {
-            case 'term':
-                $filename = '期間別集計_'.$now->format('YmdHis').'.csv';
-                break;
-            case 'product':
-                $filename = '商品別集計_'.$now->format('YmdHis').'.csv';
-                break;
-            case 'age':
-                $filename = '年代別集計_'.$now->format('YmdHis').'.csv';
-                break;
-        }
-
-        $response->headers->set('Content-Type', 'application/octet-stream');
-        $response->headers->set('Content-Disposition', 'attachment; filename='.$filename);
-        $response->send();
-        log_info('商品CSV出力ファイル名', array($filename));
-
-        return $response;
     }
 }
