@@ -485,7 +485,7 @@ class SalesReportService
     }
 
     /**
-     * age sale report.
+     * Age sale report.
      *
      * @param array $data
      *
@@ -495,18 +495,16 @@ class SalesReportService
     {
         $raw = array();
         $result = array();
-        $now = new \DateTime();
         $backgroundColor = array();
-        $i = 0;
+        $orderNumber = 0;
         foreach ($data as $Order) {
-            /* @var $Order \Eccube\Entity\Order */
             $age = '未回答';
-            $Customer = $Order->getCustomer();
-            if ($Customer) {
-                $birth = $Order->getCustomer()->getBirth();
-                if (!empty($birth)) {
-                    $age = (floor($birth->diff($now)->y / 10) * 10).'代';
-                }
+            /* @var $Order \Eccube\Entity\Order */
+            $birth = $Order->getBirth();
+            $orderDate = $Order->getOrderDate();
+            if ($birth) {
+                $orderDate = ($orderDate) ? $orderDate : new \DateTime();
+                $age = (floor($birth->diff($orderDate)->y / 10) * 10).'代';
             }
             if (!array_key_exists($age, $result)) {
                 $result[$age] = 0;
@@ -518,10 +516,10 @@ class SalesReportService
             $result[$age] += $Order->getPaymentTotal();
             $raw[$age]['total'] += $Order->getPaymentTotal();
             ++$raw[$age]['time'];
-            $backgroundColor[$i] = $this->getColor($i);
-            ++$i;
-            if ($i > 10) {
-                $i = $i % 10;
+            $backgroundColor[$orderNumber] = $this->getColor($orderNumber);
+            ++$orderNumber;
+            if ($orderNumber > 10) {
+                $orderNumber = $orderNumber % 10;
             }
         }
         // Sort by age ASC.
@@ -529,7 +527,7 @@ class SalesReportService
         ksort($raw);
         log_info('SalesReport Plugin : age report ', array('result count' => count($raw)));
         // Return null and not display in screen
-        if ($i == 0) {
+        if (count($raw) == 0) {
             return array(
                 'raw' => null,
                 'graph' => null,
