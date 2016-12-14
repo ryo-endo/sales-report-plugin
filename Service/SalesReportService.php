@@ -339,8 +339,9 @@ class SalesReportService
             $params['order_id'] = $Order->getId();
             $stmt = $entityManager->getConnection()->prepare($sql);
             $stmt->execute($params);
-            $customer_id = $stmt->fetch(\PDO::FETCH_COLUMN);
-            if ($customer_id) {
+
+            $customerId = $stmt->fetch(\PDO::FETCH_COLUMN);
+            if ($customerId) {
                 $raw[$orderDate]['member_male'] += ($sex == self::MALE);
                 $raw[$orderDate]['member_female'] += ($sex == self::FEMALE);
             } else {
