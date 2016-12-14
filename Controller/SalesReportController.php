@@ -27,7 +27,7 @@ class SalesReportController
     /**
      * @var array
      */
-    private $termCsvHeader = ['期間', '購入件数', '購入合計(円)', '購入平均(円)'];
+    private $termCsvHeader = ['期間', '購入件数', '男性', '女性', '男性 (会員)', '男性 (非会員)', '女性 (会員)', '女性 (非会員)	','購入合計(円)', '購入平均(円)'];
 
     /**
      * @var array
@@ -189,7 +189,7 @@ class SalesReportController
                 } else {
                     $money = 0;
                 }
-                fputcsv($handle, array($date, $row['time'], $row['price'], $money), $separator);
+                fputcsv($handle, array($date, $row['time'], $row['male'], $row['female'], $row['member_male'], $row['nonmember_male'], $row['member_female'], $row['nonmember_female'], $row['price'], $money), $separator);
             }
             fclose($handle);
         } catch (\Exception $e) {
