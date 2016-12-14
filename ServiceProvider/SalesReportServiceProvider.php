@@ -50,6 +50,9 @@ class SalesReportServiceProvider implements ServiceProviderInterface
         $admin->match('/plugin/sales_report/product', '\\Plugin\\SalesReport\\Controller\\SalesReportController::product')
             ->bind('admin_plugin_sales_report_product');
 
+        $admin->match('/plugin/sales_report/export/{type}', '\\Plugin\\SalesReport\\Controller\\SalesReportController::export')
+            ->bind('admin_plugin_sales_report_export');
+
         $app->mount('/'.trim($app['config']['admin_route'], '/').'/', $admin);
 
         // Formの定義

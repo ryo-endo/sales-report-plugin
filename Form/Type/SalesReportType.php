@@ -57,13 +57,13 @@ class SalesReportType extends AbstractType
             ->add('monthly_year', 'choice', array(
                 'label' => '年',
                 'required' => true,
-                'choices' => array_combine($yearList,$yearList),
+                'choices' => array_combine($yearList, $yearList),
                 'data' => date('Y'),
             ))
             ->add('monthly_month', 'choice', array(
                 'label' => '月',
                 'required' => true,
-                'choices' => array_combine($monthList,$monthList),
+                'choices' => array_combine($monthList, $monthList),
                 'data' => date('n'),
             ))
             ->add('term_start', 'date', array(

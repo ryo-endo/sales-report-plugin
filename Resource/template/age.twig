@@ -68,7 +68,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
         {% if rawData is not null %}
             <div class="row">
                 <div class="box-header">
-                    <a id="export-csv" class="btn btn-default pull-right" data-export="export">CSVダウンロード</a>
+                    <a href="{{ url('admin_plugin_sales_report_export', { type : 'age' }) }}" class="btn btn-default pull-right">CSVダウンロード</a>
                 </div>
             </div>
             <div class="row">
