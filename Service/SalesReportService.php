@@ -299,6 +299,13 @@ class SalesReportService
         $price = array();
         $orderNumber = 0;
         $format = $this->formatUnit();
+
+        // Sort date in week
+        if ($this->unit == 'byWeekDay') {
+            $raw = array('Sun' => '', 'Mon' => '', 'Tue' => '', 'Wed' => '', 'Thu' => '', 'Fri' => '', 'Sat' => '');
+            $price = $raw;
+        }
+
         for ($term = $start; $term < $end; $term = $term->modify('+ 1 Hour')) {
             $date = $term->format($format);
             $raw[$date] = array(
