@@ -98,10 +98,6 @@ class SalesReportController
      */
     public function export(Application $app, Request $request, $type)
     {
-        if($request->getMethod() == 'GET') {
-            throw new BadRequestHttpException();
-        }
-
         set_time_limit(0);
         $response = new StreamedResponse();
         $session = $request->getSession();
