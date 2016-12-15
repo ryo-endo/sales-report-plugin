@@ -13,7 +13,6 @@ namespace Plugin\SalesReport\Controller;
 use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class SalesReportController.
@@ -34,19 +33,6 @@ class SalesReportController
      * @var array
      */
     private $ageCsvHeader = array('年代', '購入件数(件)', '購入合計(円)', '購入平均(円)');
-
-    /**
-     * redirect by report type. default is term.
-     *
-     * @param Application $app
-     * @param Request     $request
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function index(Application $app, Request $request)
-    {
-        return $this->response($app, $request);
-    }
 
     /**
      * 期間別集計.
@@ -135,7 +121,7 @@ class SalesReportController
                     $class->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
                     break;
                 default:
-                    $class->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    $class->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
             }
         });
 

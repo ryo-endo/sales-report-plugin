@@ -38,9 +38,6 @@ class SalesReportServiceProvider implements ServiceProviderInterface
             $admin->requireHttps();
         }
         // Routingを追加
-        $admin->match('/plugin/sales_report', '\\Plugin\\SalesReport\\Controller\\SalesReportController::index')
-            ->bind('admin_plugin_sales_report');
-
         $admin->match('/plugin/sales_report/term', '\\Plugin\\SalesReport\\Controller\\SalesReportController::term')
             ->bind('admin_plugin_sales_report_term');
 
@@ -87,8 +84,8 @@ class SalesReportServiceProvider implements ServiceProviderInterface
                 'icon' => 'cb-chart',
                 'child' => array(
                     array(
-                        'id' => 'admin_plugin_sales_report',
-                        'url' => 'admin_plugin_sales_report',
+                        'id' => 'admin_plugin_sales_report_term',
+                        'url' => 'admin_plugin_sales_report_term',
                         'name' => '期間別集計',
                     ),
                     array(
