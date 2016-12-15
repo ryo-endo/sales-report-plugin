@@ -226,7 +226,7 @@ class SalesReportService
     {
         $unit = array(
             'byDay' => 'Y-m-d',
-            'byMonth' => 'm',
+            'byMonth' => 'Y-m',
             'byWeekDay' => 'D',
             'byHour' => 'H',
         );
