@@ -100,7 +100,6 @@ class SalesReportController
         set_time_limit(0);
         $response = new StreamedResponse();
         $session = $request->getSession();
-        $filename = '';
         if ($session->has('eccube.admin.plugin.sales_report.export')) {
             $searchData = $session->get('eccube.admin.plugin.sales_report.export');
         } else {
@@ -121,18 +120,21 @@ class SalesReportController
                 ->getData();
         }
 
-        $response->setCallback(function () use ($data, $app, $request, $type) {
+        $class = $this;
+        $response->setCallback(function () use ($data, $app, $request, $type, &$class) {
             //export data by type
             switch ($type) {
                 case 'term':
-                    $this->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    $class->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
                     break;
                 case 'product':
-                    $this->exportProductCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    $class->exportProductCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
                     break;
                 case 'age':
-                    $this->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    $class->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
                     break;
+                default:
+                    $class->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
             }
         });
 
@@ -148,6 +150,8 @@ class SalesReportController
             case 'age':
                 $filename = '年代別集計_'.$now->format('YmdHis').'.csv';
                 break;
+            default:
+                $filename = '期間別集計_'.$now->format('YmdHis').'.csv';
         }
 
         $response->headers->set('Content-Type', 'application/octet-stream');
