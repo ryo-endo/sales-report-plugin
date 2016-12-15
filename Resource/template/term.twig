@@ -84,13 +84,14 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                 <table class="table table-striped" id="term-table">
                                     <colgroup>
                                         <col />
-                                        <col width="8%"/>
-                                        <col width="8%"/>
-                                        <col width="8%"/>
-                                        <col width="8%"/>
-                                        <col width="8%"/>
-                                        <col width="8%"/>
-                                        <col width="8%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
+                                        <col width="7%"/>
                                         <col />
                                         <col />
                                     </colgroup>
@@ -100,6 +101,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                             <th style="text-align: center">購入件数</th>
                                             <th style="text-align: center">男性</th>
                                             <th style="text-align: center">女性</th>
+                                            <th style="text-align: center">不明</th>
                                             <th style="text-align: center">男性 (会員)</th>
                                             <th style="text-align: center">男性 (非会員)</th>
                                             <th style="text-align: center">女性 (会員)</th>
@@ -116,6 +118,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
 
                                                 <td class="text-right">{{ row.male|number_format }}</td>
                                                 <td class="text-right">{{ row.female|number_format }}</td>
+                                                <td class="text-right">{{ row.other|number_format }}</td>
                                                 <td class="text-right">{{ row.member_male|number_format }}</td>
                                                 <td class="text-right">{{ row.nonmember_male|number_format }}</td>
                                                 <td class="text-right">{{ row.member_female|number_format }}</td>

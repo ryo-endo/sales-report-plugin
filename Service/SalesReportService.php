@@ -306,6 +306,7 @@ class SalesReportService
                 'time' => 0,
                 'male' => 0,
                 'female' => 0,
+                'other' => 0,
                 'member_male' => 0,
                 'nonmember_male' => 0,
                 'member_female' => 0,
@@ -332,6 +333,8 @@ class SalesReportService
             $sex = 0;
             if (EntityUtil::isNotEmpty($Sex)) {
                 $sex = $Order->getSex()->getId();
+            } else {
+                $raw[$orderDate]['other'] += 1;
             }
             $raw[$orderDate]['male'] += ($sex == self::MALE);
             $raw[$orderDate]['female'] += ($sex == self::FEMALE);
