@@ -238,7 +238,8 @@ class SalesReportController
             //convert data to encoding
             foreach ($rows as $id => $row) {
                 $code = mb_convert_encoding($row['OrderDetail']->getProductCode(), $encoding, 'UTF-8');
-                $name = mb_convert_encoding($row['OrderDetail']->getProductName(), $encoding, 'UTF-8');
+                $name = $row['OrderDetail']->getProductName() . ' ' . $row['OrderDetail']->getClassCategoryName1() . ' ' . $row['OrderDetail']->getClassCategoryName2();
+                $name = mb_convert_encoding($name , $encoding, 'UTF-8');
                 fputcsv($handle, array($code, $name, $row['time'], $row['quantity'], $row['price'], $row['total']), $separator);
             }
             fclose($handle);
