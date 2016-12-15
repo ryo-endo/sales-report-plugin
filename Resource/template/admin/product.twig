@@ -51,9 +51,11 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
             //export csv
             $('#export-csv').click(function () {
                 var form = document.createElement("form");
-                form.method = "POST";
-                form.action = "{{ url('admin_plugin_sales_report_export', { type : 'product' }) }}";
+                form.setAttribute("method", 'POST');
+                form.setAttribute("action", "{{ url('admin_plugin_sales_report_export', { type : 'product' }) }}");
+                document.body.appendChild(form);
                 form.submit();
+                document.body.removeChild(form);
             });
         };
     </script>
