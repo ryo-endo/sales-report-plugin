@@ -100,7 +100,9 @@ class SalesReportController
 
         // Query data from database
         if ($searchData) {
-            $searchData['term_end'] = $searchData['term_end']->modify('- 1 day');
+            if($searchData['term_end']) {
+                $searchData['term_end'] = $searchData['term_end']->modify('- 1 day');
+            }
             $data = $app['salesreport.service.sales_report']
                 ->setReportType($type)
                 ->setTerm($searchData['term_type'], $searchData)
@@ -189,7 +191,7 @@ class SalesReportController
         log_info('SalesReport Plugin : render ', array('template' => $template));
 
         return $app->render(
-            'SalesReport/Resource/template/'.$template.'.twig',
+            'SalesReport/Resource/template/admin/'.$template.'.twig',
             array(
                 'form' => $form->createView(),
                 'graphData' => json_encode($data['graph']),

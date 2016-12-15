@@ -51,7 +51,6 @@ class SaleReportControllerTest extends SaleReportCommon
     public function dataRoutingProvider()
     {
         return array(
-            array('', '期間別集計'),
             array('_term', '期間別集計'),
             array('_product', '商品別集計'),
             array('_age', '年代別集計'),
@@ -83,8 +82,8 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['monthly_year'] = $current->format('Y');
             $arrSearch['monthly_month'] = $current->format('m');
         } else {
-            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
-            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
+            $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
         }
         $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $this->assertContains($expected, $crawler->html());
@@ -117,8 +116,8 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['monthly_year'] = $current->format('Y');
             $arrSearch['monthly_month'] = $current->format('m');
         } else {
-            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
-            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
+            $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
         }
         $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $moneyElement = $crawler->filter('tr .hidden');
@@ -168,8 +167,8 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['monthly_year'] = $current->format('Y');
             $arrSearch['monthly_month'] = $current->format('m');
         } else {
-            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
-            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
+            $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
         }
         $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $this->assertContains($expected, $crawler->html());
@@ -199,8 +198,8 @@ class SaleReportControllerTest extends SaleReportCommon
             $arrSearch['monthly_year'] = $current->format('Y');
             $arrSearch['monthly_month'] = $current->format('m');
         } else {
-            $arrSearch['term_start'] = $current->modify('-5 days')->format('Y-m-d');
-            $arrSearch['term_end'] = $current->modify('+5 days')->format('Y-m-d');
+            $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
+            $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
         }
         $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $moneyElement = $crawler->filter('tr .hidden');

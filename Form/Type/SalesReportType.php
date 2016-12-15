@@ -45,6 +45,7 @@ class SalesReportType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $app = $this->app;
         // 年月の配列定義. 今年±20年
         $yearList = range(date('Y') - 20, date('Y') + 20);
         // 1～12月
@@ -101,22 +102,22 @@ class SalesReportType extends AbstractType
                     new Assert\NotBlank(),
                 ),
             ))
-            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            ->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($app) {
                 $form = $event->getForm();
                 $data = $form->getData();
                 if ($data['term_type'] === 'monthly') {
                     if (empty($data['monthly_year'])) {
                         $form['monthly_year']->addError(
-                            new FormError($this->app->trans('plugin.sales_report.type.monthly.error'))
+                            new FormError($app->trans('plugin.sales_report.type.monthly.error'))
                         );
                     }
                     if (empty($data['monthly_month'])) {
                         $form['monthly_month']->addError(
-                            new FormError($this->app->trans('plugin.sales_report.type.monthly.error'))
+                            new FormError($app->trans('plugin.sales_report.type.monthly.error'))
                         );
                     }
                 } elseif ($data['term_type'] === 'term' && (empty($data['term_start']) || empty($data['term_end']))) {
-                    $form['term_start']->addError(new FormError($this->app->trans('plugin.sales_report.type.term_start.error')));
+                    $form['term_start']->addError(new FormError($app->trans('plugin.sales_report.type.term_start.error')));
                 }
             })
         ;

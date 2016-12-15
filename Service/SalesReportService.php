@@ -455,7 +455,8 @@ class SalesReportService
         foreach ($products as $key => $product) {
             $total = $product['total'];
             $backgroundColor[$i] = $this->getColor($i);
-            if ($i >= 10) {
+            $maximumDisplay = $this->app['config']['SalesReport']['const']['product_maximum_display'];
+            if ($i >= $maximumDisplay) {
                 if (!isset($graphData[$i])) {
                     $graphData[$i] = $total;
                 } else {
