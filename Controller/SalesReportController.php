@@ -13,6 +13,7 @@ namespace Plugin\SalesReport\Controller;
 use Eccube\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class SalesReportController.
@@ -97,6 +98,10 @@ class SalesReportController
      */
     public function export(Application $app, Request $request, $type)
     {
+        if($request->getMethod() == 'GET') {
+            throw new BadRequestHttpException();
+        }
+
         set_time_limit(0);
         $response = new StreamedResponse();
         $session = $request->getSession();
