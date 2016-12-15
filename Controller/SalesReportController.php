@@ -262,7 +262,7 @@ class SalesReportController
                 } else {
                     $money = 0;
                 }
-                fputcsv($handle, array($date, $row['time'], $row['male'], $row['female'], $row['member_male'], $row['nonmember_male'], $row['member_female'], $row['nonmember_female'], $row['price'], $money), $separator);
+                fputcsv($handle, array($date, $row['time'], $row['male'], $row['female'], $row['other'], $row['member_male'], $row['nonmember_male'], $row['member_female'], $row['nonmember_female'], $row['price'], $money), $separator);
             }
             fclose($handle);
         } catch (\Exception $e) {
