@@ -47,7 +47,7 @@ class SalesReportType extends AbstractType
     {
         $app = $this->app;
         // 年月の配列定義. 今年±20年
-        $yearList = range(date('Y') - 20, date('Y') + 20);
+        $yearList = range(date('Y'), date('Y') - 20);
         // 1～12月
         $monthList = range(1, 12);
 
