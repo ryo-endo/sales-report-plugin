@@ -40,7 +40,7 @@ class SaleReportCommon extends AbstractAdminWebTestCase
         $current = new \DateTime();
         for ($i = 0; $i < $number; ++$i) {
             $email = 'customer0'.$i.'@mail.com';
-            $age = ($i < 7) ? $i * 10 + 19 : $i * 10 - 19;
+            $age = rand(10, 50);
             $age = $current->modify("-$age years");
             $Customer = $this->createCustomer($email);
             $arrCustomer[] = $Customer->getId();
