@@ -278,10 +278,10 @@ class SalesReportService
             '#63A69F',
             '#3F5765',
             '#685C79',
-            '#979C9C',
         );
+        $colorIndex = $index % count($map);
 
-        return $map[$index];
+        return $map[$colorIndex];
     }
 
     /**
@@ -411,7 +411,6 @@ class SalesReportService
      */
     private function convertByProduct($data)
     {
-        $i = 0;
         $label = array();
         $graphData = array();
         $backgroundColor = array();
@@ -450,25 +449,21 @@ class SalesReportService
             $products[$key]['total'] = $total;
         }
         //sort by total money
+        $count = 0;
+        $maxDisplayCount = $this->app['config']['SalesReport']['const']['product_maximum_display'];
         $products = $this->sortBy('total', $products);
         log_info('SalesReport Plugin : product report ', array('result count' => count($products)));
         foreach ($products as $key => $product) {
-            $total = $product['total'];
-            $backgroundColor[$i] = $this->getColor($i);
-            $maximumDisplay = $this->app['config']['SalesReport']['const']['product_maximum_display'];
-            if ($i >= $maximumDisplay) {
-                if (!isset($graphData[$i])) {
-                    $graphData[$i] = $total;
-                } else {
-                    $graphData[$i] += $total;
-                }
-                $label[$i] = 'Other';
-            } else {
-                $label[$i] = $product['OrderDetail']->getProductName().' ';
-                $label[$i] .= $product['OrderDetail']->getClassCategoryName1().' ';
-                $label[$i] .= $product['OrderDetail']->getClassCategoryName2();
-                $graphData[$i] = $total;
-                ++$i;
+            $backgroundColor[$count] = $this->getColor($count);
+
+            $label[$count] = $product['OrderDetail']->getProductName().' ';
+            $label[$count] .= $product['OrderDetail']->getClassCategoryName1().' ';
+            $label[$count] .= $product['OrderDetail']->getClassCategoryName2();
+            $graphData[$count] = $product['total'];
+            ++$count;
+
+            if ($maxDisplayCount <= $count) {
+                break;
             }
         }
 
@@ -482,7 +477,7 @@ class SalesReportService
         );
 
         //return null and not display in screen
-        if ($i == 0) {
+        if ($count == 0) {
             return array(
                 'raw' => null,
                 'graph' => null,

@@ -22,10 +22,14 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
             //create pie chart
             if (graphData != null) {
                 var config = {
-                    type: 'pie',
+                    type: 'bar',
                     data: graphData,
                     options: {
                         responsive: true,
+                        title:{
+                            display: true,
+                            text: "商品別集計 上位" + {{ app.config.SalesReport.const.product_maximum_display }} + "件"
+                        },
                         tooltips: {
                             callbacks: {
                                 label : function tooltipsRender(tooltipItem, graphData) {
@@ -37,11 +41,24 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                             }
                         },
                         legend: {
-                            position: 'bottom',
-                            labels: {
-                                fontSize: 8,
-                                boxWidth: 10
-                            }
+                            display: false
+                        },
+                        scales: {
+                            xAxes: [{
+                                ticks: {
+                                    minRotation: 90,
+                                    maxRotation: 90
+                                }
+                            }],
+                            yAxes: [{
+                                ticks: {
+                                    callback: function(value){
+                                        return new Intl.NumberFormat().format(value);
+                                    },
+                                    beginAtZero:true,
+                                    suggestedMin: 0
+                                }
+                            }]
                         }
                     }
                 };
