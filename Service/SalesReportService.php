@@ -576,6 +576,7 @@ class SalesReportService
 
             if ($maxDisplayCount <= $count) {
                 break;
+
             }
         }
 
