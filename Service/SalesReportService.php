@@ -48,6 +48,21 @@ class SalesReportService
     private $unit;
 
     /**
+     * @var array
+     */
+    private $productCsvHeader = array('商品コード', '商品名', '購入件数（件）', '数量（個）', '金額（円）');
+
+    /**
+     * @var array
+     */
+    private $termCsvHeader = array('期間', '購入件数', '男性', '女性', '不明', '男性(会員)', '男性(非会員)', '女性(会員)', '女性(非会員)', '購入合計(円)', '購入平均(円)');
+
+    /**
+     * @var array
+     */
+    private $ageCsvHeader = array('年代', '購入件数(件)', '購入合計(円)', '購入平均(円)');
+
+    /**
      * @var int
      */
     const MALE = 1;
@@ -162,6 +177,108 @@ class SalesReportService
         }
 
         return $this->convert($result);
+    }
+
+    /**
+     * get product report csv.
+     *
+     * @param array  $rows
+     * @param string $separator
+     * @param string $encoding
+     */
+    public function exportProductCsv($rows, $separator, $encoding)
+    {
+        try {
+            $handle = fopen('php://output', 'w+');
+            $headers = $this->productCsvHeader;
+            $headerRow = array();
+            //convert header to encoding
+            foreach ($headers as $header) {
+                $headerRow[] = mb_convert_encoding($header, $encoding, 'UTF-8');
+            }
+            fputcsv($handle, $headerRow, $separator);
+            //convert data to encoding
+            foreach ($rows as $id => $row) {
+                $code = mb_convert_encoding($row['OrderDetail']->getProductCode(), $encoding, 'UTF-8');
+                $name = $row['OrderDetail']->getProductName().' '.$row['OrderDetail']->getClassCategoryName1().' '.$row['OrderDetail']->getClassCategoryName2();
+                $name = mb_convert_encoding($name, $encoding, 'UTF-8');
+                fputcsv($handle, array($code, $name, $row['time'], $row['quantity'], $row['total']), $separator);
+            }
+            fclose($handle);
+        } catch (\Exception $e) {
+            log_info('CSV product export exception', array($e->getMessage()));
+        }
+    }
+
+    /**
+     * get term report csv.
+     *
+     * @param array  $rows
+     * @param string $separator
+     * @param string $encoding
+     */
+    public function exportTermCsv($rows, $separator, $encoding)
+    {
+        try {
+            $handle = fopen('php://output', 'w+');
+            $headers = $this->termCsvHeader;
+            $headerRow = array();
+            //convert header to encoding
+            foreach ($headers as $header) {
+                $headerRow[] = mb_convert_encoding($header, $encoding, 'UTF-8');
+            }
+            fputcsv($handle, $headerRow, $separator);
+            foreach ($rows as $date => $row) {
+                if ($row['time'] > 0) {
+                    $money = round($row['price'] / $row['time']);
+                } else {
+                    $money = 0;
+                }
+                fputcsv($handle, array($date, $row['time'], $row['male'], $row['female'], $row['other'], $row['member_male'], $row['nonmember_male'], $row['member_female'], $row['nonmember_female'], $row['price'], $money), $separator);
+            }
+            fclose($handle);
+        } catch (\Exception $e) {
+            log_info('CSV term export exception', array($e->getMessage()));
+        }
+    }
+
+    /**
+     * get age report csv.
+     *
+     * @param array  $rows
+     * @param string $separator
+     * @param string $encoding
+     */
+    public function exportAgeCsv($rows, $separator, $encoding)
+    {
+        try {
+            $handle = fopen('php://output', 'w+');
+            $headers = $this->ageCsvHeader;
+            $headerRow = array();
+            //convert header to encoding
+            foreach ($headers as $header) {
+                $headerRow[] = mb_convert_encoding($header, $encoding, 'UTF-8');
+            }
+            fputcsv($handle, $headerRow, $separator);
+            foreach ($rows as $age => $row) {
+                if ($row['time'] > 0) {
+                    $money = round($row['total'] / $row['time']);
+                } else {
+                    $money = 0;
+                }
+                //convert from number to japanese.
+                if ($age == 999) {
+                    $age = '未回答';
+                    $age = mb_convert_encoding($age, $encoding, 'UTF-8');
+                } else {
+                    $age = mb_convert_encoding($age.'代', $encoding, 'UTF-8');
+                }
+                fputcsv($handle, array($age, $row['time'], $row['total'], $money), $separator);
+            }
+            fclose($handle);
+        } catch (\Exception $e) {
+            log_info('CSV age export exception', array($e->getMessage()));
+        }
     }
 
     /**
@@ -496,18 +613,19 @@ class SalesReportService
     {
         $raw = array();
         $result = array();
+        $tmp = array();
         $backgroundColor = array();
         $orderNumber = 0;
         foreach ($data as $Order) {
-            $age = '未回答';
+            $age = 999;
             /* @var $Order \Eccube\Entity\Order */
             $birth = $Order->getBirth();
             $orderDate = $Order->getOrderDate();
             if ($birth) {
                 $orderDate = ($orderDate) ? $orderDate : new \DateTime();
-                $age = (floor($birth->diff($orderDate)->y / 10) * 10).'代';
+                $age = (floor($birth->diff($orderDate)->y / 10) * 10);
             }
-            if (!array_key_exists($age, $result)) {
+            if (!isset($result[$age])) {
                 $result[$age] = 0;
                 $raw[$age] = array(
                     'total' => 0,
@@ -523,6 +641,15 @@ class SalesReportService
         // Sort by age ASC.
         ksort($result);
         ksort($raw);
+        foreach ($result as $key => $value) {
+            if ($key == 999) {
+                $key = '未回答';
+                $tmp[$key] = $value;
+            } else {
+                $tmp[$key.'代'] = $value;
+            }
+
+        }
         log_info('SalesReport Plugin : age report ', array('result count' => count($raw)));
         // Return null and not display in screen
         if (count($raw) == 0) {
@@ -533,13 +660,13 @@ class SalesReportService
         }
 
         $graph = array(
-            'labels' => array_keys($result),
+            'labels' => array_keys($tmp),
             'datasets' => array(
                 'label' => '購入合計',
                 'backgroundColor' => $backgroundColor,
                 'borderColor' => $backgroundColor,
                 'borderWidth' => 0,
-                'data' => array_values($result),
+                'data' => array_values($tmp),
             ),
         );
 

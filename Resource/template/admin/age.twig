@@ -93,7 +93,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                     <tbody>
                                     {% for age, row in rawData %}
                                         <tr>
-                                            <td>{{ age }}</td>
+                                            <td>{{ age == 999 ? '未回答' : age~'代' }}</td>
                                             <td class="text-right">{{ row.time|number_format }}</td>
                                             <td class="price-format text-right">
                                                 {{ row.total|number_format }}

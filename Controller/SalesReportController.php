@@ -20,21 +20,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class SalesReportController
 {
     /**
-     * @var array
-     */
-    private $productCsvHeader = array('商品コード', '商品名', '購入件数(件)', '数量(個)', '単価(円)', '金額(円)');
-
-    /**
-     * @var array
-     */
-    private $termCsvHeader = array('期間', '購入件数', '男性', '女性', '男性(会員)', '男性(非会員)', '女性(会員)', '女性(非会員)', '購入合計(円)', '購入平均(円)');
-
-    /**
-     * @var array
-     */
-    private $ageCsvHeader = array('年代', '購入件数(件)', '購入合計(円)', '購入平均(円)');
-
-    /**
      * 期間別集計.
      *
      * @param Application $app
@@ -109,21 +94,20 @@ class SalesReportController
                 ->getData();
         }
 
-        $class = $this;
-        $response->setCallback(function () use ($data, $app, $request, $type, $class) {
+        $response->setCallback(function () use ($data, $app, $request, $type) {
             //export data by type
             switch ($type) {
                 case 'term':
-                    $class->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    $app['salesreport.service.sales_report']->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
                     break;
                 case 'product':
-                    $class->exportProductCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    $app['salesreport.service.sales_report']->exportProductCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
                     break;
                 case 'age':
-                    $class->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    $app['salesreport.service.sales_report']->exportAgeCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
                     break;
                 default:
-                    $class->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
+                    $app['salesreport.service.sales_report']->exportTermCsv($data['raw'], $app['config']['csv_export_separator'], $app['config']['csv_export_encoding']);
             }
         });
 
@@ -143,7 +127,6 @@ class SalesReportController
                 $filename = 'salesreport_term_'.$now->format('YmdHis').'.csv';
         }
 
-        $filename = urlencode($filename);
         $response->headers->set('Content-Type', 'application/octet-stream;');
         $response->headers->set('Content-Disposition', 'attachment; filename='.$filename);
         $response->send();
@@ -205,102 +188,6 @@ class SalesReportController
                 'options' => $options,
             )
         );
-    }
-
-    /**
-     * get product report csv.
-     *
-     * @param array  $rows
-     * @param string $separator
-     * @param string $encoding
-     */
-    private function exportProductCsv($rows, $separator, $encoding)
-    {
-        try {
-            $handle = fopen('php://output', 'w+');
-            $headers = $this->productCsvHeader;
-            $headerRow = array();
-            //convert header to encoding
-            foreach ($headers as $header) {
-                $headerRow[] = mb_convert_encoding($header, $encoding, 'UTF-8');
-            }
-            fputcsv($handle, $headerRow, $separator);
-            //convert data to encoding
-            foreach ($rows as $id => $row) {
-                $code = mb_convert_encoding($row['OrderDetail']->getProductCode(), $encoding, 'UTF-8');
-                $name = $row['OrderDetail']->getProductName().' '.$row['OrderDetail']->getClassCategoryName1().' '.$row['OrderDetail']->getClassCategoryName2();
-                $name = mb_convert_encoding($name, $encoding, 'UTF-8');
-                fputcsv($handle, array($code, $name, $row['time'], $row['quantity'], $row['price'], $row['total']), $separator);
-            }
-            fclose($handle);
-        } catch (\Exception $e) {
-            log_info('CSV product export exception', array($e->getMessage()));
-        }
-    }
-
-    /**
-     * get term report csv.
-     *
-     * @param array  $rows
-     * @param string $separator
-     * @param string $encoding
-     */
-    private function exportTermCsv($rows, $separator, $encoding)
-    {
-        try {
-            $handle = fopen('php://output', 'w+');
-            $headers = $this->termCsvHeader;
-            $headerRow = array();
-            //convert header to encoding
-            foreach ($headers as $header) {
-                $headerRow[] = mb_convert_encoding($header, $encoding, 'UTF-8');
-            }
-            fputcsv($handle, $headerRow, $separator);
-            foreach ($rows as $date => $row) {
-                if ($row['time'] > 0) {
-                    $money = round($row['price'] / $row['time']);
-                } else {
-                    $money = 0;
-                }
-                fputcsv($handle, array($date, $row['time'], $row['male'], $row['female'], $row['other'], $row['member_male'], $row['nonmember_male'], $row['member_female'], $row['nonmember_female'], $row['price'], $money), $separator);
-            }
-            fclose($handle);
-        } catch (\Exception $e) {
-            log_info('CSV term export exception', array($e->getMessage()));
-        }
-    }
-
-    /**
-     * get age report csv.
-     *
-     * @param array  $rows
-     * @param string $separator
-     * @param string $encoding
-     */
-    private function exportAgeCsv($rows, $separator, $encoding)
-    {
-        try {
-            $handle = fopen('php://output', 'w+');
-            $headers = $this->ageCsvHeader;
-            $headerRow = array();
-            //convert header to encoding
-            foreach ($headers as $header) {
-                $headerRow[] = mb_convert_encoding($header, $encoding, 'UTF-8');
-            }
-            fputcsv($handle, $headerRow, $separator);
-            foreach ($rows as $age => $row) {
-                if ($row['time'] > 0) {
-                    $money = round($row['total'] / $row['time']);
-                } else {
-                    $money = 0;
-                }
-                $age = mb_convert_encoding($age, $encoding, 'UTF-8');
-                fputcsv($handle, array($age, $row['time'], $row['total'], $money), $separator);
-            }
-            fclose($handle);
-        } catch (\Exception $e) {
-            log_info('CSV age export exception', array($e->getMessage()));
-        }
     }
 
     /**
