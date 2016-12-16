@@ -524,9 +524,6 @@ class SalesReportService
             ++$raw[$age]['time'];
             $backgroundColor[$orderNumber] = $this->getColor($orderNumber);
             ++$orderNumber;
-            if ($orderNumber > 10) {
-                $orderNumber = $orderNumber % 10;
-            }
         }
         // Sort by age ASC.
         ksort($result);
