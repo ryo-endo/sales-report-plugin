@@ -21,32 +21,61 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
             if(graphData != null) {
                 var dataSet = graphData.datasets;
                 graphData.datasets = [dataSet];
-                var config = {
-                    type: 'line',
-                    data: graphData,
-                    options: {
-                        responsive: true,
-                        tooltips: {
-                            callbacks: {
-                                label : function tooltipsRender(tooltipItem, graphData) {
-                                    var index = tooltipItem.index;
-                                    var tooltipData = graphData.datasets[0].data[index];
-                                    var tooltipLabel = graphData.labels[index];
-                                    return '購入合計 : ¥' + moneyFormat(tooltipData);
-                                }
-                            }
-                        },
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    callback: function(value){
-                                        return new Intl.NumberFormat().format(value);
+                {% if options.unit is defined and (options.unit == 'byWeekDay' or options.unit == 'byHour') %}
+                    var config = {
+                        type: 'bar',
+                        data: graphData,
+                        options: {
+                            responsive: true,
+                            tooltips: {
+                                callbacks: {
+                                    label : function tooltipsRender(tooltipItem, graphData) {
+                                        var index = tooltipItem.index;
+                                        var tooltipData = graphData.datasets[0].data[index];
+                                        var tooltipLabel = graphData.labels[index];
+                                        return '購入合計 : ¥' + moneyFormat(tooltipData);
                                     }
                                 }
-                            }]
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        callback: function(value){
+                                            return Math.round(value).toString().replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+                                        }
+                                    }
+                                }]
+                            }
                         }
-                    }
-                };
+                    };
+                {% else %}
+                    var config = {
+                        type: 'line',
+                        data: graphData,
+                        options: {
+                            responsive: true,
+                            tooltips: {
+                                callbacks: {
+                                    label : function tooltipsRender(tooltipItem, graphData) {
+                                        var index = tooltipItem.index;
+                                        var tooltipData = graphData.datasets[0].data[index];
+                                        var tooltipLabel = graphData.labels[index];
+                                        return '購入合計 : ¥' + moneyFormat(tooltipData);
+                                    }
+                                }
+                            },
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        callback: function(value){
+                                            return Math.round(value).toString().replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+                                        }
+                                    }
+                                }]
+                            }
+                        }
+                    };
+                {% endif %}
                 var ctx = document.getElementById("chart").getContext("2d");
                 new Chart(ctx, config);
             }

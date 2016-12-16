@@ -100,7 +100,7 @@ class SalesReportController
 
         // Query data from database
         if ($searchData) {
-            if($searchData['term_end']) {
+            if ($searchData['term_end']) {
                 $searchData['term_end'] = $searchData['term_end']->modify('- 1 day');
             }
             $data = $app['salesreport.service.sales_report']
@@ -177,15 +177,19 @@ class SalesReportController
             'raw' => null,
         );
 
+        $options = array();
+
         if (!is_null($reportType) && $form->isValid()) {
             $session = $request->getSession();
             $searchData = $form->getData();
             $searchData['term_type'] = $form->get('term_type')->getData();
             $session->set('eccube.admin.plugin.sales_report.export', $searchData);
+            $termType = $form->get('term_type')->getData();
             $data = $app['salesreport.service.sales_report']
                 ->setReportType($reportType)
-                ->setTerm($form->get('term_type')->getData(), $searchData)
+                ->setTerm($termType, $searchData)
                 ->getData();
+            $options = $this->getRenderOptions($reportType, $searchData);
         }
 
         $template = is_null($reportType) ? 'term' : $reportType;
@@ -198,6 +202,7 @@ class SalesReportController
                 'graphData' => json_encode($data['graph']),
                 'rawData' => $data['raw'],
                 'type' => $reportType,
+                'options' => $options,
             )
         );
     }
@@ -223,8 +228,8 @@ class SalesReportController
             //convert data to encoding
             foreach ($rows as $id => $row) {
                 $code = mb_convert_encoding($row['OrderDetail']->getProductCode(), $encoding, 'UTF-8');
-                $name = $row['OrderDetail']->getProductName() . ' ' . $row['OrderDetail']->getClassCategoryName1() . ' ' . $row['OrderDetail']->getClassCategoryName2();
-                $name = mb_convert_encoding($name , $encoding, 'UTF-8');
+                $name = $row['OrderDetail']->getProductName().' '.$row['OrderDetail']->getClassCategoryName1().' '.$row['OrderDetail']->getClassCategoryName2();
+                $name = mb_convert_encoding($name, $encoding, 'UTF-8');
                 fputcsv($handle, array($code, $name, $row['time'], $row['quantity'], $row['price'], $row['total']), $separator);
             }
             fclose($handle);
@@ -296,5 +301,32 @@ class SalesReportController
         } catch (\Exception $e) {
             log_info('CSV age export exception', array($e->getMessage()));
         }
+    }
+
+    /**
+     * get option params for render.
+     *
+     * @param $termType
+     * @param $searchData
+     *
+     * @return array options
+     */
+    private function getRenderOptions($termType, $searchData)
+    {
+        $options = array();
+
+        switch ($termType) {
+            case 'term':
+                // 期間の集計単位
+                if (isset($searchData['unit'])) {
+                    $options['unit'] = $searchData['unit'];
+                }
+                break;
+            default:
+                // no option
+                break;
+        }
+
+        return $options;
     }
 }
