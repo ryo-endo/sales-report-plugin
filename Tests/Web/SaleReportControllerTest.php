@@ -205,9 +205,7 @@ class SaleReportControllerTest extends SaleReportCommon
         $moneyElement = $crawler->filter('tr .hidden');
         //get only total money. don't get product price
         foreach ($moneyElement as $domElement) {
-            if ($i % 2 != 0) {
-                $orderMoney += $domElement->nodeValue;
-            }
+            $orderMoney += $domElement->nodeValue;
             ++$i;
         }
 
