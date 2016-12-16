@@ -100,7 +100,6 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                         <th>商品名</th>
                                         <th>購入件数(件)</th>
                                         <th>数量(個)</th>
-                                        <th>単価(円)</th>
                                         <th>金額(円)</th>
                                     </tr>
                                     </thead>
@@ -111,10 +110,6 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                             <td>{{ row.OrderDetail.product_name }} {{ row.OrderDetail.class_category_name1 }} {{ row.OrderDetail.class_category_name2 }}</td>
                                             <td class="text-right">{{ row.time|number_format }}</td>
                                             <td class="text-right">{{ row.quantity|number_format }}</td>
-                                            <td class="price-format text-right">
-                                                {{ row.price|number_format }}
-                                                <span class="hidden">{{ row.price|raw }}</span>
-                                            </td>
                                             <td class="price-format text-right">
                                                 {{ row.total|number_format }}
                                                 <span class="hidden">{{ row.total|raw }}</span>

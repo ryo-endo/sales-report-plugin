@@ -110,7 +110,7 @@ class SalesReportController
         }
 
         $class = $this;
-        $response->setCallback(function () use ($data, $app, $request, $type, &$class) {
+        $response->setCallback(function () use ($data, $app, $request, $type, $class) {
             //export data by type
             switch ($type) {
                 case 'term':
@@ -131,16 +131,16 @@ class SalesReportController
         $now = new \DateTime();
         switch ($type) {
             case 'term':
-                $filename = '期間別集計_'.$now->format('YmdHis').'.csv';
+                $filename = 'salesreport_term_'.$now->format('YmdHis').'.csv';
                 break;
             case 'product':
-                $filename = '商品別集計_'.$now->format('YmdHis').'.csv';
+                $filename = 'salesreport_product_'.$now->format('YmdHis').'.csv';
                 break;
             case 'age':
-                $filename = '年代別集計_'.$now->format('YmdHis').'.csv';
+                $filename = 'salesreport_age_'.$now->format('YmdHis').'.csv';
                 break;
             default:
-                $filename = '期間別集計_'.$now->format('YmdHis').'.csv';
+                $filename = 'salesreport_term_'.$now->format('YmdHis').'.csv';
         }
 
         $filename = urlencode($filename);
