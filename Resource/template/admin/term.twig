@@ -41,8 +41,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                 yAxes: [{
                                     ticks: {
                                         callback: function(value){
-                                            return new Intl.NumberFormat().format(value);
-                                        }
+                                            return Math.round(value).toString().replace(/(\d)(?=(\d{3})+$)/g, '$1,');
                                         }
                                     }
                                 }]
@@ -69,7 +68,7 @@ Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
                                 yAxes: [{
                                     ticks: {
                                         callback: function(value){
-                                            return new Intl.NumberFormat().format(value);
+                                            return Math.round(value).toString().replace(/(\d)(?=(\d{3})+$)/g, '$1,');
                                         }
                                     }
                                 }]
