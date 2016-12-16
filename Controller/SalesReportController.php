@@ -189,7 +189,7 @@ class SalesReportController
                 ->setReportType($reportType)
                 ->setTerm($termType, $searchData)
                 ->getData();
-            $options = $this->getRenderOptions($termType, $searchData);
+            $options = $this->getRenderOptions($reportType, $searchData);
         }
 
         $template = is_null($reportType) ? 'term' : $reportType;
