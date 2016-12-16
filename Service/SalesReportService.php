@@ -280,6 +280,9 @@ class SalesReportService
             '#685C79',
             '#979C9C',
         );
+        if ($index >= sizeof($map)) {
+            $index = sizeof($map) - 1;
+        }
 
         return $map[$index];
     }
