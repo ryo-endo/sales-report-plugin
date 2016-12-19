@@ -68,7 +68,7 @@ class SaleReportControllerTest extends SaleReportCommon
      */
     public function testSaleReportAll($type, $termType, $unit, $expected)
     {
-        $this->createOrderByCustomer(30);
+        $this->createOrderByCustomer(5);
         $current = new \DateTime();
         $arrSearch = array(
             'term_type' => $termType,
@@ -105,7 +105,7 @@ class SaleReportControllerTest extends SaleReportCommon
         $j = 0;
         $orderMoney = array();
         $flag = false;
-        $this->createOrderByCustomer(30);
+        $this->createOrderByCustomer(5);
         $current = new \DateTime();
         $arrSearch = array(
             'term_type' => $termType,
@@ -152,7 +152,7 @@ class SaleReportControllerTest extends SaleReportCommon
     public function testProductDelete($type, $termType, $unit, $expected)
     {
         $current = new \DateTime();
-        $arrOrder = $this->createOrderByCustomer(30);
+        $arrOrder = $this->createOrderByCustomer(5);
         $this->deleteProduct($arrOrder[0]);
         $arrSearch = array(
             'term_type' => $termType,
@@ -186,7 +186,7 @@ class SaleReportControllerTest extends SaleReportCommon
         $i = 0;
         $orderMoney = 0;
         $current = new \DateTime();
-        $arrOrder = $this->createOrderByCustomer(30);
+        $arrOrder = $this->createOrderByCustomer(5);
         $TaxRule = $this->app['eccube.repository.tax_rule']->getByRule();
         $this->changeOrderDetail($arrOrder);
         $arrSearch = array(
@@ -210,7 +210,7 @@ class SaleReportControllerTest extends SaleReportCommon
         }
 
         $tax = $TaxRule->getTaxRate() / 100;
-        $this->expected = 500 * 30 * (1 + $tax);
+        $this->expected = 500 * 5 * (1 + $tax);
         $this->actual = $orderMoney;
         $this->verify();
     }
