@@ -33,9 +33,7 @@ env:
     - ECCUBE_VERSION=3.0.11 DB=pgsql USER=postgres DBNAME=myapp_test DBPASS=password DBUSER=postgres
 matrix:
   fast_finish: true
-  include:
   exclude:
-  allow_failures:
     - php: 5.3
       env: ECCUBE_VERSION=master DB=sqlite
     - php: 5.4

@@ -141,7 +141,7 @@ class SaleReportControllerTest extends SaleReportCommon
     }
 
     /**
-     * test product delete.
+     * test product delete for all pattern.
      *
      * @param string $type
      * @param string $termType
