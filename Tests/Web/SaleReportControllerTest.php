@@ -80,7 +80,7 @@ class SaleReportControllerTest extends SaleReportCommon
 
         if ($termType == 'monthly') {
             $arrSearch['monthly_year'] = $current->format('Y');
-            $arrSearch['monthly_month'] = $current->format('m');
+            $arrSearch['monthly_month'] = $current->format('n');
         } else {
             $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
@@ -88,7 +88,7 @@ class SaleReportControllerTest extends SaleReportCommon
         $crawler = $this->client->request('POST', $this->app->url('admin_plugin_sales_report'.$type), array('sales_report' => $arrSearch));
         $this->assertContains($expected, $crawler->html());
 
-        //test display csv download button
+        // Test display csv download button
         $this->assertContains('CSVダウンロード', $crawler->html());
     }
 
@@ -114,7 +114,7 @@ class SaleReportControllerTest extends SaleReportCommon
 
         if ($termType == 'monthly') {
             $arrSearch['monthly_year'] = $current->format('Y');
-            $arrSearch['monthly_month'] = $current->format('m');
+            $arrSearch['monthly_month'] = $current->format('n');
         } else {
             $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
@@ -165,7 +165,7 @@ class SaleReportControllerTest extends SaleReportCommon
 
         if ($termType == 'monthly') {
             $arrSearch['monthly_year'] = $current->format('Y');
-            $arrSearch['monthly_month'] = $current->format('m');
+            $arrSearch['monthly_month'] = $current->format('n');
         } else {
             $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
@@ -196,7 +196,7 @@ class SaleReportControllerTest extends SaleReportCommon
 
         if ($termType == 'monthly') {
             $arrSearch['monthly_year'] = $current->format('Y');
-            $arrSearch['monthly_month'] = $current->format('m');
+            $arrSearch['monthly_month'] = $current->format('n');
         } else {
             $arrSearch['term_start'] = $current->modify('-15 days')->format('Y-m-d');
             $arrSearch['term_end'] = $current->modify('+15 days')->format('Y-m-d');
